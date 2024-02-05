@@ -15,17 +15,8 @@ echo.
 copy /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd" >nul 2>&1
 
 
-set limpia10-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main/
-set curl="%~dp0curl.exe" -H "Cache-Control: no-cache, no-store"
-set winlive=no
-set soywinlive=no
-set forzar_winlive=no
-set myname=%~nx0
-if %COMPUTERNAME% equ MINWINPC (
-	set winlive=yes
-)
-
-
+set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main/
+set curl=curl.exe -H "Cache-Control: no-cache, no-store"
 
 
 
@@ -37,15 +28,21 @@ REM ============================================================================
 :parse
 IF "%~1"=="" GOTO endparse
 
-
-rem ------- No actualizar
-IF "%~1"=="ip" (
-    for /f "tokens=*" %%a IN ('ipconfig ^| Find "IPv4"') DO echo %%a
-    pause
+rem ------- help
+IF "%~1"=="help" (
+	echo  * AYUDA *
+	echo.
+	echo Parametros disponíbles:
+	echo.
+	echo	ip : muestra información de red
+	echo.
+	echo    noupdate: No intentar actualizarse
+	echo    help: Esta ayuda
+	echo.
+	pause
+	exit /b
 	)
 rem ---------------
-
-
 
 
 rem ------- No actualizar
@@ -55,55 +52,15 @@ rem *	GOTO verificando_requisitos
 	)
 rem ---------------
 
-rem ------- Ayuda?
-IF "%~1"=="help" (
-	echo  * AYUDA *
-	echo.
-	echo Parametros disponíbles:
-	echo.
-	echo    noupdate: No intentar actualizarse
-	echo    a-z: Unidad exclusiva a limpiar
-	echo    live: Forzar modo Windows Live
-	echo    help: Esta ayuda
-	echo.
-	pause
-	exit /b
+
+
+rem ------- ip
+IF "%~1"=="ip" (
+    for /f "tokens=*" %%a IN ('ipconfig ^| Find "IPv4"') DO echo %%a
+    pause
 	)
 rem ---------------
 
-
-rem ------- Forzar modo live?
-IF "%~1"=="live" (
-	set forzar_winlive=yes
-	echo  * Modo Windows LIVE
-)
-rem ---------------
-
-
-rem ------- Unidad?
-
-setlocal enableextensions
-
-set "drive=%~1"
-set "valid=N"
-
-if not "%drive%" == "" (
-  set "drive=%drive:~0,2%"
-  if not "%drive%" == "" (
-    for /f "tokens=1 delims=:" %%d in ("%drive%") do set "drive=%%d"
-    for %%d in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
-      if /i "%%d" == "%drive%" set "valid=Y"
-    )
-  )
-)
-
-if "%valid%" == "Y" (
-  echo  * Sólo se limpiara unidad %drive%:
-  echo.
-  set param_drive=-path !drive!:
-)
-
-endlocal
 
 rem ---------------
 
