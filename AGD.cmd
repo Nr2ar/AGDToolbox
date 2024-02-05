@@ -17,7 +17,7 @@ echo.
 copy /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd" >nul 2>&1
 
 
-set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main/
+set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
 set curl=curl.exe -H "Cache-Control: no-cache, no-store"
 
 
@@ -75,8 +75,11 @@ IF "%~1"=="total" (
 echo.
 echo * Instalación de Total Commander
 
+cd "%temp%"
 
+%curl% --remote-name ftp://live:SoyLive666@ftp.nr2.com.ar:43321/Install/TotalCommanderInstall11.exe
 
+rem "%temp%\TotalCommanderInstall11.exe"
 
 )
 
