@@ -1,15 +1,17 @@
 @echo off                           
 prompt $$ 
-chcp 65001
-cls
+rem chcp 65001
+mode con: cols=120 lines=50
+for /f %%a in ('whoami') do set "whoami=%%a"
 
 REM Que version soy?
 for %%F in ("%~f0") do set "fileSize=%%~zF"
+cls
 
-Title AGD Toolbox - Version %fileSize%
+Title AGD Toolbox - %whoami% - Version %fileSize%
 echo.
-echo AGD Toolbox v%fileSize%
-echo ----------------
+echo AGD Toolbox - v%fileSize%
+echo --------------------
 echo.
 
 copy /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd" >nul 2>&1
@@ -32,9 +34,8 @@ rem ------- help
 IF "%~1"=="help" (
 	echo  * AYUDA *
 	echo.
-	echo Parametros disponíbles:
-	echo.
-	echo	ip : muestra información de red
+	echo    ip : muestra información de red
+	echo    total : instalar Total Commander
 	echo.
 	echo    noupdate: No intentar actualizarse
 	echo    help: Esta ayuda
@@ -56,11 +57,28 @@ rem ---------------
 
 rem ------- ip
 IF "%~1"=="ip" (
-    for /f "tokens=*" %%a IN ('ipconfig ^| Find "IPv4"') DO echo %%a
+
+whoami.exe
+echo.
+
+ipconfig /all | findstr /v /i /c:"Descrip" /c:"*" /c:"Teredo" | findstr /i /c:"adapt" /c:"Ethernet" /c:"IPv4" /c:"subred" /c:"subnet" /c:"Mask" /c:"Physical" /c:"sica." /c:"Puerta" /c:"Gateway" /c:"192." /c:".0"
+
+echo.
+
     pause
 	)
 rem ---------------
 
+rem ------- total
+IF "%~1"=="total" (
+
+echo.
+echo * Instalación de Total Commander
+
+
+
+
+)
 
 rem ---------------
 
@@ -76,30 +94,3 @@ REM ready for action!
 exit /b
 
 = = = = = = = = = = = = FIN = = = = = = = = = = = = =
-
-
-
-exit /b
-No me funcionó :[
-
-echo %limpia-free%> "%~dp0limpia-free.txt"
-FOR %%? IN ("%~dp0limpia-free.txt") DO (SET /A "limpia_free_length=%%~z? - 2")
-del /q "%~dp0limpia-free.txt" >nul 2>&1
-
-echo on
-rem Check if limpia_free_length is equal to or less than 8.
-if %limpia_free_length% LEQ 8 (
-  set limpia_free_8=%limpia-free%
-) else (
-  rem Use only the first 8 characters of limpia-free
-  set limpia_free_8=%limpia-free:~0,9%
-)
-
-set /a "gibibytes=limpia_free_8 / 1024 / 1024"
-set /a "remainder=(limpia_free_8 %% (gibibytes * 1024 * 1024)) * 100 / (gibibytes * 1024 * 1024)"
-set limpia_free_GB=%gibibytes%.%remainder%
-
-echo limpia-free %limpia-free%
-echo limpia_free_8 %limpia_free_8%
-echo limpia_free_GB+remainder %limpia_free_GB%
-
