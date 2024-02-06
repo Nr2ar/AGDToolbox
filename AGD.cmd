@@ -19,8 +19,10 @@ copy /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd" >nul 2>&1
 
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
 set curl=curl.exe -H "Cache-Control: no-cache, no-store"
-
-
+set ftp1=ftp://live
+set ftp2=SoyLive666
+set ftp3=ftp.nr2.com.ar:43321
+set ftp=%ftp1%:%ftp2%@%ftp3%
 
 REM ============================================================================
 REM ============       PARAMETROS              =================================
@@ -77,7 +79,7 @@ echo * Instalación de Total Commander
 
 cd "%temp%"
 
-%curl% --remote-name ftp://live:SoyLive666@ftp.nr2.com.ar:43321/Install/TotalCommanderInstall11.exe
+%curl% --remote-name %ftp%/Install/TotalCommanderInstall11.exe
 
 rem "%temp%\TotalCommanderInstall11.exe"
 
