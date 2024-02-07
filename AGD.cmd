@@ -38,6 +38,7 @@ IF "%~1"=="" GOTO eof
 
 IF "%~1"=="help" goto %~1
 IF "%~1"=="noupdate" goto %~1
+IF "%~1"=="install" goto %~1
 IF "%~1"=="ip" goto %~1
 IF "%~1"=="total" goto %~1
 IF "%~1"=="reteam" goto %~1
@@ -56,6 +57,7 @@ echo    ip : muestra información de red y Windows
 echo    total : instalar Total Commander
 echo    reteam : fuerza reinstalacion de Teamviewer 13
 echo.
+echo    install: instala AGD Toolbox
 echo    noupdate: No intentar actualizarse
 echo    help: Esta ayuda
 echo.
@@ -67,6 +69,13 @@ rem ----------------------------------------------------------------------------
 :noupdate
 	echo  * NO actualizar
 rem *	GOTO verificando_requisitos
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
+
+:install
+
 
 goto next
 rem ------------------------------------------------------------------------------------------
@@ -84,11 +93,13 @@ for /f "skip=1 delims=" %%a in ('wmic computersystem get domain') do (
     )
 )
 
-for /f "tokens=3 delims= " %%A IN ('reg query HKEY_LOCAL_MACHINE\SOFTWARE\TeamViewer /v ClientID ^| Find "0x"') DO set /A TeamID=%%A >nul
-for /f "tokens=3 delims= " %%A IN ('reg query HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\TeamViewer /v ClientID ^| Find "0x"') DO set /A TeamID=%%A >nul
+(
+for /f "tokens=3 delims= " %%A IN ('reg query HKEY_LOCAL_MACHINE\SOFTWARE\TeamViewer /v ClientID ^| Find "0x"') DO set /A TeamID=%%A
+for /f "tokens=3 delims= " %%A IN ('reg query HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\TeamViewer /v ClientID ^| Find "0x"') DO set /A TeamID=%%A
+) >nul 2>&1
 
-echo. Host: %ip_workgroup_domain%- %whoami%
-if defined TeamID (echo Teamviewer: %TeamID%)
+echo  Host: %ip_workgroup_domain%- %whoami%
+if defined TeamID (echo  Teamviewer: %TeamID%)
 echo.
 
 ipconfig /all | findstr /v /i /c:"Descrip" /c:"*" /c:"Teredo" | findstr /i /c:"adapt" /c:"Ethernet" /c:"IPv4" /c:"subred" /c:"subnet" /c:"Mask" /c:"Physical" /c:"sica." /c:"Puerta" /c:"Gateway" /c:"192." /c:".0"
