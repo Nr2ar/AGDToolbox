@@ -36,7 +36,10 @@ REM ============================================================================
 IF "%~1"=="" GOTO endparse
 
 
-IF "%~1"=="help" goto %~1
+IF "%~1"=="help" goto help
+IF "%~1"=="ip" goto ip
+IF "%~1"=="total" goto total
+IF "%~1"=="reteam" goto reteam
 
 
 
@@ -59,12 +62,11 @@ IF "%~1"=="noupdate" (
 	echo  * NO actualizar
 rem *	GOTO verificando_requisitos
 	)
-rem ---------------
+rem ------------------------------------------------------------------------------------------
 
 
 
-rem ------- ip
-IF "%~1"=="ip" (
+:ip
 
 for /f %%a in ('wmic computersystem get domain ^| findstr /r /v "^$"') do (set ip_workgroup_domain=%%a)
 
@@ -81,12 +83,11 @@ echo IP Publica: %ip_public% - %ip_hostname%
 echo.
 
     pause
-	)
-rem ---------------
+	
+rem ------------------------------------------------------------------------------------------
 
-rem ------- total
-IF "%~1"=="total" (
 
+:total
 echo.
 echo * Instalación de Total Commander
 
@@ -96,12 +97,10 @@ cd "%temp%"
 
 "%temp%\TotalCommanderInstall11.exe"
 
-)
-rem ---------------
+rem ------------------------------------------------------------------------------------------
 
 
-rem ------- reteam
-IF "%~1"=="reteam" (
+:reteam
 
 echo.
 echo * Instalación de Teamviewer 13
@@ -112,8 +111,7 @@ cd "%temp%"
 
 "%temp%\ReTeam13.exe"
 
-)
-rem ---------------
+rem ------------------------------------------------------------------------------------------
 
 
 
