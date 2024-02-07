@@ -23,9 +23,10 @@ copy /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd" >nul 2>&1
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
 set curl=curl.exe -H "Cache-Control: no-cache, no-store"
 set ftp1=ftp://live
-set ftp2=SoyLive666
-set ftp3=ftp.nr2.com.ar
-set ftp=%ftp1%:%ftp2%@%ftp3%:43321
+set ftp2=SoyLive
+set ftp3=ftp.nr2.com
+set ftp=%ftp1%:%ftp2%666@%ftp3%.ar:43321
+
 
 REM ============================================================================
 REM ============       PARAMETROS              =================================
@@ -33,14 +34,19 @@ REM ============================================================================
 
 
 :parse
-IF "%~1"=="" GOTO endparse
-
+IF "%~1"=="" GOTO eof
 
 IF "%~1"=="help" goto %~1
+IF "%~1"=="noupdate" goto %~1
 IF "%~1"=="ip" goto %~1
 IF "%~1"=="total" goto %~1
 IF "%~1"=="reteam" goto %~1
 
+:next
+SHIFT
+goto parse
+:endparse
+REM ready for action!
 
 
 :help
@@ -53,24 +59,33 @@ echo.
 echo    noupdate: No intentar actualizarse
 echo    help: Esta ayuda
 echo.
-pause
-exit /b
+
+goto next
+rem ------------------------------------------------------------------------------------------
 
 
-rem ------- No actualizar
-IF "%~1"=="noupdate" (
+:noupdate
 	echo  * NO actualizar
 rem *	GOTO verificando_requisitos
-	)
+
+goto next
 rem ------------------------------------------------------------------------------------------
 
 
 
 :ip
+rem for /f %%a in ('wmic computersystem get domain ^| findstr /r /v "^$"') do (set ip_workgroup_domain=%%a)
 
-for /f %%a in ('wmic computersystem get domain ^| findstr /r /v "^$"') do (set ip_workgroup_domain=%%a)
+for /f "skip=1 delims=" %%a in ('wmic computersystem get domain') do (
+    set "line=%%a"
+    if not defined secondLine (
+        set ip_workgroup_domain=!line!
+        set "secondLine=true"
+    )
+)
 
-echo. Host: !ip_workgroup_domain! - %whoami%
+echo. Host: %ip_workgroup_domain%- %whoami%
+echo.
 
 ipconfig /all | findstr /v /i /c:"Descrip" /c:"*" /c:"Teredo" | findstr /i /c:"adapt" /c:"Ethernet" /c:"IPv4" /c:"subred" /c:"subnet" /c:"Mask" /c:"Physical" /c:"sica." /c:"Puerta" /c:"Gateway" /c:"192." /c:".0"
 
@@ -82,8 +97,7 @@ echo IP Publica: %ip_public% - %ip_hostname%
 
 echo.
 
-    pause
-	
+goto next
 rem ------------------------------------------------------------------------------------------
 
 
@@ -97,6 +111,7 @@ cd "%temp%"
 
 "%temp%\TotalCommanderInstall11.exe"
 
+goto next
 rem ------------------------------------------------------------------------------------------
 
 
@@ -111,19 +126,13 @@ cd "%temp%"
 
 "%temp%\ReTeam13.exe"
 
+goto next
 rem ------------------------------------------------------------------------------------------
 
 
+:eof
 
-SHIFT
-GOTO parse
-:endparse
-REM ready for action!
-
-
-
-
-
+pause
 exit /b
 
 = = = = = = = = = = = = FIN = = = = = = = = = = = = =
