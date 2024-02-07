@@ -36,10 +36,10 @@ REM ============================================================================
 IF "%~1"=="" GOTO endparse
 
 
-IF "%~1"=="help" goto help
-IF "%~1"=="ip" goto ip
-IF "%~1"=="total" goto total
-IF "%~1"=="reteam" goto reteam
+IF "%~1"=="help" goto %~1
+IF "%~1"=="ip" goto %~1
+IF "%~1"=="total" goto %~1
+IF "%~1"=="reteam" goto %~1
 
 
 
