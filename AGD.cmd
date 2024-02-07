@@ -24,8 +24,8 @@ set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
 set curl=curl.exe -H "Cache-Control: no-cache, no-store"
 set ftp1=ftp://live
 set ftp2=SoyLive666
-set ftp3=ftp.nr2.com.ar:43321
-set ftp=%ftp1%:%ftp2%@%ftp3%
+set ftp3=ftp.nr2.com.ar
+set ftp=%ftp1%:%ftp2%@%ftp3%:43321
 
 REM ============================================================================
 REM ============       PARAMETROS              =================================
@@ -35,21 +35,22 @@ REM ============================================================================
 :parse
 IF "%~1"=="" GOTO endparse
 
-rem ------- help
-IF "%~1"=="help" (
-	echo  * AYUDA *
-	echo.
-	echo    ip : muestra información de red y Windows
-	echo    total : instalar Total Commander
-	echo    reteam : instalar Teamviewer 13
-	echo.
-	echo    noupdate: No intentar actualizarse
-	echo    help: Esta ayuda
-	echo.
-	pause
-	exit /b
-	)
-rem ---------------
+
+IF "%~1"=="help" goto %~1
+
+
+:help
+echo  * AYUDA *
+echo.
+echo    ip : muestra información de red y Windows
+echo    total : instalar Total Commander
+echo    reteam : fuerza reinstalacion de Teamviewer 13
+echo.
+echo    noupdate: No intentar actualizarse
+echo    help: Esta ayuda
+echo.
+pause
+exit /b
 
 
 rem ------- No actualizar
