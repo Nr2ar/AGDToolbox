@@ -3,9 +3,11 @@ prompt $$
 rem chcp 65001
 mode con: cols=120 lines=50
 for /f %%a in ('whoami') do set "whoami=%%a"
+setlocal enableextensions enabledelayedexpansion
 
-setlocal enabledelayedexpansion
 
+rem borrar rastros de getadmin
+del /s /q "%TEMP%\%~n0.vbs" > NUL 2>&1
 
 REM Que version soy?
 for %%F in ("%~f0") do set "fileSize=%%~zF"
@@ -17,11 +19,19 @@ echo AGD Toolbox - v%fileSize%
 echo --------------------
 echo.
 
-copy /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd" >nul 2>&1
+:updated
 
+if %~n0 == AGD-update(
+	FOR /F "usebackq" %%A IN ('%systemroot%\AGD.cmd') DO set old-size=%%~zA
+	copy /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd"
+	echo Toolbox actualizado de versión v!old-size!
+	pause
+	exit
+	exit
+)
 
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
-set curl=curl.exe -H "Cache-Control: no-cache, no-store"
+set curl=curl.exe -H "Cache-Control: no-cache, no-store" --remote-name
 set ftp1=ftp://live
 set ftp2=SoyLive
 set ftp3=ftp.nr2.com
@@ -35,6 +45,7 @@ REM ============================================================================
 
 :parse
 IF "%~1"=="" GOTO eof
+IF "%~1"=="admin" set AGD-admin=yes
 
 IF "%~1"=="help" goto %~1
 IF "%~1"=="noupdate" goto %~1
@@ -76,9 +87,25 @@ rem ----------------------------------------------------------------------------
 
 :install
 
-echo * instalar
+echo * Instalar AGD Toolbox
 
+call getadmin
+
+for /f "tokens=*" %%a in ('time.exe /t') do set current_time=%%a
+
+schtasks /create /ru SYSTEM /sc WEEKLY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%SystemRoot%\AGD.cmd' sched" /it /F
+
+cd "%temp%"
+%curl% %AGDToolbox-URL%\AGD.cmd
+
+move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd"
+
+start "AGD Update" "%SystemRoot%\AGD-update.cmd"
+
+exit
+exit
 pause
+
 
 goto next
 rem ------------------------------------------------------------------------------------------
@@ -125,7 +152,7 @@ echo * Instalación de Total Commander
 
 cd "%temp%"
 
-%curl% --remote-name %ftp%/Install/TotalCommanderInstall11.exe
+%curl% %ftp%/Install/TotalCommanderInstall11.exe
 
 "%temp%\TotalCommanderInstall11.exe"
 
@@ -140,7 +167,7 @@ echo * Instalación de Teamviewer 13
 
 cd "%temp%"
 
-%curl% --remote-name %ftp%/PORTABLES/ReTeam13.exe
+%curl% %ftp%/PORTABLES/ReTeam13.exe
 
 "%temp%\ReTeam13.exe"
 
@@ -152,5 +179,25 @@ rem ----------------------------------------------------------------------------
 
 pause
 exit /b
+exit
+
+:getadmin
+
+if not defined AGD-admin exit /b
+
+REM Check admin mode, auto-elevate if required.
+  openfiles > NUL 2>&1 || (
+    REM Not elevated. Do it.
+    echo createObject^("Shell.Application"^).shellExecute "%~dpnx0", "admin %*", "", "runas">"%TEMP%\%~n0.vbs"
+    cscript /nologo "%TEMP%\%~n0.vbs"
+    exit
+  )
+
+del /s /q "%TEMP%\%~n0.vbs" > NUL 2>&1
+
+REM If here, then process is elevated. Otherwise, batch is already terminated and/or stuck in code above.
+
+exit /b
+
 
 = = = = = = = = = = = = FIN = = = = = = = = = = = = =
