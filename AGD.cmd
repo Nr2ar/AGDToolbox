@@ -27,13 +27,11 @@ echo.
 :updated
 
 if %~n0 == AGD-update (
-  echo ME ACABO DE ACTUALIZAR
-  pause
-
-	FOR /F "usebackq" %%A IN ('%systemroot%\AGD.cmd') DO set old-size=%%~zA
+  FOR /F "usebackq" %%A IN ('%systemroot%\AGD.cmd') DO set old-size=%%~zA
 	copy /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd"
 	echo Toolbox actualizado de versión v!old-size!
-	pause
+	echo.
+  timeout 15
 	exit
 	exit
 )
