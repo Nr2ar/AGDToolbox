@@ -28,7 +28,7 @@ echo.
 
 if %~n0 == AGD-update (
   FOR /F "usebackq" %%A IN ('%systemroot%\AGD.cmd') DO set old-size=%%~zA
-	copy /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd"
+	move /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd"
 	echo Toolbox actualizado de versión v!old-size!
 	echo.
   timeout 15
