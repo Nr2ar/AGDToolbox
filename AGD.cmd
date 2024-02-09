@@ -110,7 +110,8 @@ move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd"
 
 start "AGD Update" "%SystemRoot%\AGD-update.cmd"
 
-goto next
+exit
+exit
 rem ------------------------------------------------------------------------------------------
 
 
