@@ -113,6 +113,7 @@ move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd"
 if not defined AGD-Scheduled (
   echo esto?
   start "AGD Update" "%SystemRoot%\AGD-update.cmd"
+  pause
   )
 
 
