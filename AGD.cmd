@@ -108,12 +108,10 @@ schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolb
 cd "%temp%"
 %curl% %AGDToolbox-URL%/AGD.cmd
 
-move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd" || echo Error moviendo temp\AGD.cmd a Windows\AGD-Update.cmd & pause
+move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd" || echo Error moviendo temp\AGD.cmd a Windows\AGD-Update.cmd & timeout 15
 
 if not defined AGD-Scheduled (
-  echo esto?
   start "AGD Update" "%SystemRoot%\AGD-update.cmd"
-  pause
   )
 
 cmd /c move "%SystemRoot%\AGD-update.cmd" "%SystemRoot%\AGD.cmd"
