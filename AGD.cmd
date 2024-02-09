@@ -115,7 +115,7 @@ cd "%temp%"
 move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd"
 
 if not defined AGD-Scheduled (
-  start "AGD Update" "%SystemRoot%\AGD-update.cmd"
+  if exist "%SystemRoot%\AGD-update.cmd" (start "AGD Update" "%SystemRoot%\AGD-update.cmd")
   )
 
 cmd /c move "%SystemRoot%\AGD-update.cmd" "%SystemRoot%\AGD.cmd"
