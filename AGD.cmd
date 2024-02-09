@@ -70,6 +70,7 @@ goto parse
 REM ready for action!
 
 
+REM //ANCHOR - Help
 :help
 echo  * AYUDA *
 echo.
@@ -94,7 +95,9 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
+REM //ANCHOR Install
 :install
+
 
 echo * Instalar AGD Toolbox
 
@@ -120,7 +123,7 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
-
+REM //ANCHOR - IP
 :ip
 rem for /f %%a in ('wmic computersystem get domain ^| findstr /r /v "^$"') do (set ip_workgroup_domain=%%a)
 
@@ -155,6 +158,7 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
+REM //ANCHOR - Total Commander
 :total
 echo.
 echo * Instalación de Total Commander
@@ -169,6 +173,7 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
+REM //ANCHOR - ReTeam
 :reteam
 
 echo.
@@ -191,6 +196,7 @@ pause
 exit /b
 exit
 
+REM //ANCHOR - GetAdmin
 :getadmin
 
 if defined AGD-admin exit /b
