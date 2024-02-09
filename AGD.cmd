@@ -112,6 +112,7 @@ for /f "tokens=*" %%a in ('time.exe /t') do set current_time=%%a
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%SystemRoot%\AGD.cmd' sched" /it /F
 
 :install-update
+%temp:~0,2%
 cd "%temp%"
 %curl% %AGDToolbox-URL%/AGD.cmd
 
@@ -183,6 +184,7 @@ echo * Instalación de Total Commander
 
 call :getadmin
 
+%temp:~0,2%
 cd "%temp%"
 echo on
 %curl% --ignore-content-length %ftp%/Install/TotalCommanderInstall11.exe
@@ -203,6 +205,7 @@ echo * Instalación de Teamviewer 13
 
 call :getadmin
 
+%temp:~0,2%
 cd "%temp%"
 
 %curl% --ignore-content-length %ftp%/PORTABLES/ReTeam13.exe
