@@ -175,8 +175,10 @@ echo.
 echo * Instalación de Total Commander
 
 cd "%temp%"
-
+echo on
 %curl% %ftp%/Install/TotalCommanderInstall11.exe
+
+@echo off
 
 "%temp%\TotalCommanderInstall11.exe"
 
