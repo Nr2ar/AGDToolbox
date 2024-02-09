@@ -24,8 +24,8 @@ echo AGD Toolbox - v%fileSize%
 echo --------------------
 echo.
 
-:updated
 
+:updated
 if %~n0 == AGD-update (
   FOR /F "usebackq" %%A IN ('%systemroot%\AGD.cmd') DO set old-size=%%~zA
 	move /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd"  > NUL
@@ -35,6 +35,9 @@ if %~n0 == AGD-update (
 	exit
 	exit
 )
+
+if %~n0 == AGD-Toolbox goto install
+
 
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
 set curl=curl.exe -H "Cache-Control: no-cache, no-store" --remote-name
@@ -98,7 +101,7 @@ exit
 rem ------------------------------------------------------------------------------------------
 
 
-REM //ANCHOR Install
+REM //ANCHOR - Install
 :install
 echo * Instalar AGD Toolbox
 
@@ -125,7 +128,7 @@ exit
 rem ------------------------------------------------------------------------------------------
 
 
-REM //ANCHOR Scheduled Task
+REM //ANCHOR - Scheduled Task
 :sched
 
 set AGD-Scheduled=yes
@@ -178,6 +181,8 @@ REM //ANCHOR - Total Commander
 echo.
 echo * Instalación de Total Commander
 
+call :getadmin
+
 cd "%temp%"
 echo on
 %curl% --ignore-content-length %ftp%/Install/TotalCommanderInstall11.exe
@@ -195,6 +200,8 @@ REM //ANCHOR - ReTeam
 
 echo.
 echo * Instalación de Teamviewer 13
+
+call :getadmin
 
 cd "%temp%"
 
