@@ -37,7 +37,7 @@ if %~n0 == AGD-update (
 )
 
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
-set curl=curl.exe -H "Cache-Control: no-cache, no-store" --remote-name
+set curl=curl.exe -H "Cache-Control: no-cache, no-store" --remote-name --ignore-content-length
 set ftp1=ftp://live
 set ftp2=SoyLive
 set ftp3=ftp.nr2.com
