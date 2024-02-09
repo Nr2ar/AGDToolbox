@@ -95,8 +95,6 @@ rem ----------------------------------------------------------------------------
 
 REM //ANCHOR Install
 :install
-
-
 echo * Instalar AGD Toolbox
 
 call :getadmin
@@ -111,11 +109,6 @@ cd "%temp%"
 move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd"
 
 start "AGD Update" "%SystemRoot%\AGD-update.cmd"
-pause
-exit
-exit
-
-
 
 goto next
 rem ------------------------------------------------------------------------------------------
