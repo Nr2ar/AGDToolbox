@@ -102,7 +102,7 @@ call :getadmin
 
 for /f "tokens=*" %%a in ('time.exe /t') do set current_time=%%a
 
-schtasks /create /ru SYSTEM /sc WEEKLY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%SystemRoot%\AGD.cmd' sched" /it /F
+schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%SystemRoot%\AGD.cmd' sched" /it /F
 
 :install-update
 cd "%temp%"
