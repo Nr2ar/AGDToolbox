@@ -37,7 +37,7 @@ if %~n0 == AGD-update (
 )
 
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
-set curl=curl.exe -H "Cache-Control: no-cache, no-store" --remote-name --ignore-content-length
+set curl=curl.exe -H "Cache-Control: no-cache, no-store" --remote-name
 set ftp1=ftp://live
 set ftp2=SoyLive
 set ftp3=ftp.nr2.com
@@ -56,7 +56,7 @@ IF "%~1"=="admin" set AGD-admin=yes
 IF "%~1"=="sched" goto %~1
 
 IF "%~1"=="help" goto %~1
-IF "%~1"=="noupdate" goto %~1
+IF "%~1"=="update" goto %~1
 IF "%~1"=="install" goto %~1
 IF "%~1"=="ip" goto %~1
 IF "%~1"=="total" goto %~1
@@ -78,7 +78,7 @@ echo    total : instalar Total Commander
 echo    reteam : fuerza reinstalacion de Teamviewer 13
 echo.
 echo    install: instala AGD Toolbox
-echo    noupdate: No intentar actualizarse
+echo    update: Fuerza una actualización
 echo    help: Esta ayuda
 echo.
 
@@ -86,11 +86,15 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
-:noupdate
-	echo  * NO actualizar
-rem *	GOTO verificando_requisitos
+REM //ANCHOR - Update
+:update
+echo * Forzar actualización
 
-goto next
+call :getadmin
+
+goto install-update
+
+exit
 rem ------------------------------------------------------------------------------------------
 
 
@@ -176,7 +180,7 @@ echo * Instalación de Total Commander
 
 cd "%temp%"
 echo on
-%curl% %ftp%/Install/TotalCommanderInstall11.exe
+%curl% --ignore-content-length %ftp%/Install/TotalCommanderInstall11.exe
 
 @echo off
 
@@ -194,7 +198,7 @@ echo * Instalación de Teamviewer 13
 
 cd "%temp%"
 
-%curl% %ftp%/PORTABLES/ReTeam13.exe
+%curl% --ignore-content-length %ftp%/PORTABLES/ReTeam13.exe
 
 "%temp%\ReTeam13.exe"
 
