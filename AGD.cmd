@@ -110,7 +110,11 @@ cd "%temp%"
 
 move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd"
 
-if not defined AGD-Scheduled (start "AGD Update" "%SystemRoot%\AGD-update.cmd")
+if not defined AGD-Scheduled (
+  echo esto?
+  start "AGD Update" "%SystemRoot%\AGD-update.cmd"
+  pause
+  )
 
 cmd /c move "%SystemRoot%\AGD-update.cmd" "%SystemRoot%\AGD.cmd"
 
