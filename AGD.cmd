@@ -28,7 +28,7 @@ echo.
 
 if %~n0 == AGD-update (
   FOR /F "usebackq" %%A IN ('%systemroot%\AGD.cmd') DO set old-size=%%~zA
-	move /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd"
+	move /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd"  > NUL
 	echo Toolbox actualizado de versión v!old-size!
 	echo.
   timeout 15
@@ -110,11 +110,7 @@ cd "%temp%"
 
 move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd"
 
-if not defined AGD-Scheduled (
-  echo esto?
-  start "AGD Update" "%SystemRoot%\AGD-update.cmd"
-  pause
-  )
+if not defined AGD-Scheduled (start "AGD Update" "%SystemRoot%\AGD-update.cmd")
 
 
 cmd /c move "%SystemRoot%\AGD-update.cmd" "%SystemRoot%\AGD.cmd"
