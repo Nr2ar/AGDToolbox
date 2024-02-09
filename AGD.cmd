@@ -1,6 +1,6 @@
 @echo off                           
 prompt $$ 
-rem chcp 65001
+chcp 65001
 mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
