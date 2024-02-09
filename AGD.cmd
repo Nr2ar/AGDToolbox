@@ -53,6 +53,7 @@ echo Opciones: "%*"
 :parse
 IF "%~1"=="" GOTO eof
 IF "%~1"=="admin" set AGD-admin=yes
+IF "%~1"=="sched" goto %~1
 
 IF "%~1"=="help" goto %~1
 IF "%~1"=="noupdate" goto %~1
@@ -103,16 +104,32 @@ for /f "tokens=*" %%a in ('time.exe /t') do set current_time=%%a
 
 schtasks /create /ru SYSTEM /sc WEEKLY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%SystemRoot%\AGD.cmd' sched" /it /F
 
+:install-update
 cd "%temp%"
 %curl% %AGDToolbox-URL%/AGD.cmd
 
 move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd"
 
-start "AGD Update" "%SystemRoot%\AGD-update.cmd"
+if not defined AGD-Scheduled (start "AGD Update" "%SystemRoot%\AGD-update.cmd")
+
+cmd /c move "%SystemRoot%\AGD-update.cmd" "%SystemRoot%\AGD.cmd"
 
 exit
 exit
 rem ------------------------------------------------------------------------------------------
+
+
+REM //ANCHOR Scheduled Task
+:sched
+
+set AGD-Scheduled=yes
+
+echo Soy tarea programada. Me voy a actualizar
+
+goto install-update
+
+rem ------------------------------------------------------------------------------------------
+
 
 
 REM //ANCHOR - IP
