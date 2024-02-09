@@ -25,6 +25,8 @@ echo --------------------
 echo.
 
 
+if %~n0 == AGD-Toolbox goto install
+
 :updated
 if %~n0 == AGD-update (
   FOR /F "usebackq" %%A IN ('%systemroot%\AGD.cmd') DO set old-size=%%~zA
@@ -35,8 +37,6 @@ if %~n0 == AGD-update (
 	exit
 	exit
 )
-
-if %~n0 == AGD-Toolbox goto install
 
 
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
