@@ -77,9 +77,10 @@ REM //ANCHOR - Help
 :help
 echo  * AYUDA *
 echo.
-echo    ip : Muestra información de red y Windows
-echo    total : Instalar Total Commander
-echo    reteam : re/Instalacion de Teamviewer 13
+echo    ip: Muestra información de red y Windows
+echo    total: Instalar Total Commander
+echo    reteam: re/Instalacion de Teamviewer 13
+echo    spooler: Vacía cola de impresión
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -219,6 +220,24 @@ cd "%temp%"
 
 goto next
 rem ------------------------------------------------------------------------------------------
+
+REM //ANCHOR - Spooler
+:spooler
+
+echo.
+echo * Vaciar cola de impresión
+
+call :getadmin
+
+net stop spooler
+
+del /s /q "%windir%\system32\spool\printers\*.*"
+
+net start spooler
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
 
 
 :eof
