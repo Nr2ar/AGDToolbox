@@ -115,7 +115,7 @@ schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolb
 
 :install-update
 echo on
-%curl% -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
+curl.exe -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
 
 pause
 
