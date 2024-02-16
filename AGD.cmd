@@ -120,7 +120,7 @@ if not defined AGD-Scheduled (
   if exist "%SystemRoot%\AGD-update.cmd" (start "AGD Update" "%SystemRoot%\AGD-update.cmd")
   exit
   ) ELSE (
-  cmd /c move "%SystemRoot%\AGD-update.cmd" "%SystemRoot%\AGD.cmd" & exit
+  cmd /c move "%SystemRoot%\AGD-update.cmd" "%SystemRoot%\AGD.cmd" & timeout 5 & exit
   )
 
 exit
