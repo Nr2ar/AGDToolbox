@@ -6,6 +6,14 @@ setlocal enableextensions enabledelayedexpansion
 
 rem curl -L -o AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd install
 
+rem Definir variables
+set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
+set curl=curl.exe -H "Cache-Control: no-cache, no-store" --remote-name
+set ftp1=ftp://live
+set ftp2=SoyLive
+set ftp3=ftp.nr2.com
+set ftp=%ftp1%:%ftp2%666@%ftp3%.ar:43321
+
 
 rem Borrar rastros de getadmin
 del /s /q "%TEMP%\%~n0.vbs" > NUL 2>&1
@@ -39,14 +47,6 @@ if %~n0 == AGD-update (
 	exit
 	exit
 )
-
-
-set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
-set curl=curl.exe -H "Cache-Control: no-cache, no-store" --remote-name
-set ftp1=ftp://live
-set ftp2=SoyLive
-set ftp3=ftp.nr2.com
-set ftp=%ftp1%:%ftp2%666@%ftp3%.ar:43321
 
 
 REM ============================================================================
