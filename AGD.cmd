@@ -5,7 +5,7 @@ mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
 rem auto-install command line
-rem curl -L -o AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd install
+rem curl -H "Cache-Control: no-cache, no-store" -L -o AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd install
 
 rem Definir variables
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
@@ -40,7 +40,7 @@ if %~n0 == AGD-Toolbox goto install
 
 :updated
 if %~n0 == AGD-update (
-  FOR /F "usebackq" %%A IN ('%windir%\AGD.cmd') DO set old-size=%%~zA
+  FOR /F "usebackq" %%A IN ('%windir%\AGD-*.cmd') DO set old-size=%%~zA
 	move /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd"  > NUL
 	echo Toolbox v%fileSize% actualizado de versión v!old-size!
 	echo.
