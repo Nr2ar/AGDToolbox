@@ -4,7 +4,7 @@ chcp 65001
 mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
-rem curl -L -o AGD.cmd http://tool.agdseguridad.com.ar && AGD.cmd install
+rem curl -L -o AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd install
 
 
 rem Borrar rastros de getadmin
@@ -119,6 +119,8 @@ curl.exe -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
 
 pause
 
+
+rem //REVIEW - no se que hace esto
 if not defined AGD-Scheduled (
   if exist "%windir%\AGD-update.cmd" (start "AGD Update" "%windir%\AGD-update.cmd")
   exit
