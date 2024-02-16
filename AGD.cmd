@@ -4,6 +4,8 @@ chcp 65001
 mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
+rem curl -L -o AGD.cmd http://tool.agdseguridad.com.ar && AGD.cmd install
+
 
 rem Borrar rastros de getadmin
 del /s /q "%TEMP%\%~n0.vbs" > NUL 2>&1
@@ -112,17 +114,14 @@ for /f "tokens=*" %%a in ('time.exe /t') do set current_time=%%a
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%SystemRoot%\AGD.cmd' sched" /it /F
 
 :install-update
-%temp:~0,2%
-cd "%temp%"
-%curl% %AGDToolbox-URL%/AGD.cmd
-
-move "%temp%\AGD.cmd" "%SystemRoot%\AGD-update.cmd"
+%curl% -o "%SystemRoot%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
 
 if not defined AGD-Scheduled (
   if exist "%SystemRoot%\AGD-update.cmd" (start "AGD Update" "%SystemRoot%\AGD-update.cmd")
+  exit
+  ) ELSE (
+  cmd /c move "%SystemRoot%\AGD-update.cmd" "%SystemRoot%\AGD.cmd" & exit
   )
-
-cmd /c move "%SystemRoot%\AGD-update.cmd" "%SystemRoot%\AGD.cmd" & exit
 
 exit
 exit
@@ -239,6 +238,8 @@ REM Check admin mode, auto-elevate if required.
 del /s /q "%TEMP%\%~n0.vbs" > NUL 2>&1
 
 REM If here, then process is elevated. Otherwise, batch is already terminated and/or stuck in code above.
+
+
 
 exit /b
 
