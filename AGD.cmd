@@ -114,7 +114,10 @@ for /f "tokens=*" %%a in ('time.exe /t') do set current_time=%%a
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%SystemRoot%\AGD.cmd' sched" /it /F
 
 :install-update
+echo on
 %curl% -o "%SystemRoot%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
+
+pause
 
 if not defined AGD-Scheduled (
   if exist "%SystemRoot%\AGD-update.cmd" (start "AGD Update" "%SystemRoot%\AGD-update.cmd")
