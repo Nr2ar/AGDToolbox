@@ -5,7 +5,7 @@ mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
 rem auto-install command line
-rem curl -H "Cache-Control: no-cache, no-store" -L -o AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd install
+rem curl -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd install
 
 rem Definir variables
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
