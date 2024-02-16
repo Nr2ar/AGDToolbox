@@ -31,7 +31,7 @@ if %~n0 == AGD-Toolbox goto install
 
 :updated
 if %~n0 == AGD-update (
-  FOR /F "usebackq" %%A IN ('%systemroot%\AGD.cmd') DO set old-size=%%~zA
+  FOR /F "usebackq" %%A IN ('%windir%\AGD.cmd') DO set old-size=%%~zA
 	move /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd"  > NUL
 	echo Toolbox v%fileSize% actualizado de versión v!old-size!
 	echo.
@@ -111,19 +111,19 @@ call :getadmin
 
 for /f "tokens=*" %%a in ('time.exe /t') do set current_time=%%a
 
-schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%SystemRoot%\AGD.cmd' sched" /it /F
+schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%windir%\AGD.cmd' sched" /it /F
 
 :install-update
 echo on
-%curl% -o "%SystemRoot%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
+%curl% -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
 
 pause
 
 if not defined AGD-Scheduled (
-  if exist "%SystemRoot%\AGD-update.cmd" (start "AGD Update" "%SystemRoot%\AGD-update.cmd")
+  if exist "%windir%\AGD-update.cmd" (start "AGD Update" "%windir%\AGD-update.cmd")
   exit
   ) ELSE (
-  cmd /c move "%SystemRoot%\AGD-update.cmd" "%SystemRoot%\AGD.cmd" & timeout 5 & exit
+  cmd /c move "%windir%\AGD-update.cmd" "%windir%\AGD.cmd" & timeout 5 & exit
   )
 
 exit
