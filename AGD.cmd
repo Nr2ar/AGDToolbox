@@ -159,8 +159,13 @@ for /f "tokens=3 delims= " %%A IN ('reg query HKEY_LOCAL_MACHINE\SOFTWARE\TeamVi
 for /f "tokens=3 delims= " %%A IN ('reg query HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\TeamViewer /v ClientID ^| Find "0x"') DO set /A TeamID=%%A
 ) >nul 2>&1
 
+for /f "tokens=2*" %%a in ('reg query "HKEY_LOCAL_MACHINE\SOFTWARE\FusionInventory-Agent" /v "tag" 2^>nul ') do (
+    set "fusioninventory_tag=%%b"
+)
+
 echo  Host: %ip_workgroup_domain%- %whoami%
 if defined TeamID (echo  Teamviewer: %TeamID%)
+if defined fusioninventory_tag (echo  Fusion: %fusioninventory_tag%)
 echo.
 
 ipconfig /all | findstr /v /i /c:"Descrip" /c:"*" /c:"Teredo" | findstr /i /c:"adapt" /c:"Ethernet" /c:"IPv4" /c:"subred" /c:"subnet" /c:"Mask" /c:"Physical" /c:"sica." /c:"Puerta" /c:"Gateway" /c:"192." /c:".0"
