@@ -118,6 +118,9 @@ schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolb
 echo on
 curl.exe -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
 
+pause
+
+
 rem //REVIEW - no se que hace esto
 if not defined AGD-Scheduled (
   if exist "%windir%\AGD-update.cmd" (start "AGD Update" "%windir%\AGD-update.cmd")
