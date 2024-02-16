@@ -5,7 +5,7 @@ mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
 rem auto-install command line
-rem curl -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd install
+rem curl -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
 
 rem Definir variables
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
@@ -32,7 +32,7 @@ cls
 Title AGD Toolbox - %whoami% - Version %fileSize%
 
 echo AGD Toolbox - v%fileSize%
-echo --------------------
+echo -------------------- "%*"
 echo.
 
 
@@ -53,8 +53,6 @@ if %~n0 == AGD-update (
 REM ============================================================================
 REM ============       PARAMETROS              =================================
 REM ============================================================================
-
-echo Opciones: "%*"
 
 :parse
 IF "%~1"=="" GOTO eof
@@ -79,11 +77,11 @@ REM //ANCHOR - Help
 :help
 echo  * AYUDA *
 echo.
-echo    ip : muestra información de red y Windows
-echo    total : instalar Total Commander
-echo    reteam : fuerza reinstalacion de Teamviewer 13
+echo    ip : Muestra información de red y Windows
+echo    total : Instalar Total Commander
+echo    reteam : re/Instalacion de Teamviewer 13
 echo.
-echo    install: instala AGD Toolbox
+echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
 echo    help: Esta ayuda
 echo.
