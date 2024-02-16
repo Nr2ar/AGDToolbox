@@ -4,6 +4,7 @@ chcp 65001
 mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
+rem auto-install command line
 rem curl -L -o AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd install
 
 rem Definir variables
