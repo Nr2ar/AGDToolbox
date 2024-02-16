@@ -32,7 +32,7 @@ cls
 Title AGD Toolbox - %whoami% - Version %fileSize%
 
 echo AGD Toolbox - v%fileSize%
-echo -------------------- "%*"
+echo -------------------- %*
 echo.
 
 
