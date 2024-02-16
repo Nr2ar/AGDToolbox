@@ -65,6 +65,7 @@ IF "%~1"=="install" goto %~1
 IF "%~1"=="ip" goto %~1
 IF "%~1"=="total" goto %~1
 IF "%~1"=="reteam" goto %~1
+IF "%~1"=="spooler" goto %~1
 
 :next
 SHIFT
