@@ -66,6 +66,7 @@ IF "%~1"=="ip" goto %~1
 IF "%~1"=="total" goto %~1
 IF "%~1"=="reteam" goto %~1
 IF "%~1"=="spooler" goto %~1
+IF "%~1"=="printers" goto %~1
 
 :next
 SHIFT
@@ -243,6 +244,15 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
+REM //ANCHOR - Printers
+:printers
+
+control printers
+
+shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}
+
+goto next
+rem ------------------------------------------------------------------------------------------
 
 :eof
 
