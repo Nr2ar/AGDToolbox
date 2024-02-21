@@ -83,6 +83,7 @@ echo    ip: Muestra información de red y Windows
 echo    total: Instalar Total Commander
 echo    reteam: re/Instalacion de Teamviewer 13
 echo    spooler: Vacía cola de impresión
+echo    printers: Abre impresoras en Windows 11
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
