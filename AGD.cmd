@@ -44,7 +44,7 @@ if %~n0 == AGD-update (
 	move /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd"  > NUL
 	echo Toolbox v%fileSize% actualizado de versión v!old-size!
 	echo.
-  timeout 15
+  timeout 5
 	exit
 	exit
 )
@@ -119,8 +119,6 @@ schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolb
 :install-update
 echo on
 curl.exe -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
-
-pause
 
 
 rem //REVIEW - no se que hace esto
@@ -258,7 +256,7 @@ rem ----------------------------------------------------------------------------
 :eof
 
 echo FIN
-pause
+timeout 5
 exit /b
 exit
 
