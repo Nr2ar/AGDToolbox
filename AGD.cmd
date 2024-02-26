@@ -280,7 +280,6 @@ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC"
 
 echo.
 echo Reiniciar
-timeout 5 
 
 goto next
 rem ------------------------------------------------------------------------------------------
