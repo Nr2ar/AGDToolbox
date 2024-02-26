@@ -71,6 +71,7 @@ IF "%~1"=="total" goto %~1
 IF "%~1"=="reteam" goto %~1
 IF "%~1"=="spooler" goto %~1
 IF "%~1"=="printers" goto %~1
+IF "%~1"=="pesadilla" goto %~1
 
 :next
 SHIFT
@@ -88,6 +89,7 @@ echo    total: Instalar Total Commander
 echo    reteam: re/Instalacion de Teamviewer 13
 echo    spooler: Vacía cola de impresión
 echo    printers: Abre impresoras en Windows 11
+echo    pesadilla: Parche PrintNightmare
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -256,6 +258,34 @@ explorer shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}
 
 goto next
 rem ------------------------------------------------------------------------------------------
+
+
+REM //ANCHOR - Pesadilla
+:pesadilla
+
+echo.
+echo * Parche PrintNightmare
+
+call :getadmin
+
+reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Policies\Microsoft\FeatureManagement\Overrides /v 713073804 /t REG_DWORD /d 0 /f
+reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Policies\Microsoft\FeatureManagement\Overrides /v 1921033356 /t REG_DWORD /d 0 /f
+reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Policies\Microsoft\FeatureManagement\Overrides /v 3598754956 /t REG_DWORD /d 0 /f
+reg add “HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint” /v RestrictDriverInstallationToAdministrators /t REG_DWORD /d 0 /f
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print" /v RpcAuthnLevelPrivacyEnabled /t REG_DWORD /d 0 /f
+
+rem Windows 11 22H2 "RPC over named pipes"
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcUseNamedPipeProtocol /t REG_DWORD /d 1 /f
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcProtocols /t REG_DWORD /d 0x7 /f
+
+echo.
+echo Reiniciar
+timeout 5 
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
+
 
 :eof
 
