@@ -204,7 +204,7 @@ call :getadmin
 
 %temp:~0,2%
 cd "%temp%"
-echo on
+
 %curl% --ignore-content-length %ftp%/Install/TotalCommanderInstall11.exe
 
 @echo off
