@@ -189,6 +189,8 @@ echo IP Publica: %ip_public% - %ip_hostname%
 
 echo.
 
+pause
+
 goto next
 rem ------------------------------------------------------------------------------------------
 
