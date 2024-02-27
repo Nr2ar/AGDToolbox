@@ -72,6 +72,7 @@ IF "%~1"=="reteam" goto %~1
 IF "%~1"=="spooler" goto %~1
 IF "%~1"=="printers" goto %~1
 IF "%~1"=="pesadilla" goto %~1
+IF "%~1"=="hamachi" goto %~1
 
 :next
 SHIFT
@@ -90,6 +91,7 @@ echo    reteam: re/Instalacion de Teamviewer 13
 echo    spooler: Vacía cola de impresión
 echo    printers: Abre impresoras en Windows 11
 echo    pesadilla: Parche PrintNightmare
+echo    hamachi: Intenta corregir Hamachi
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -286,6 +288,26 @@ echo Reiniciar
 goto next
 rem ------------------------------------------------------------------------------------------
 
+
+
+REM //ANCHOR - Hamachi
+:Hamachi
+
+echo.
+echo * Reiniciando Hamachi
+
+call :getadmin
+
+net stop Hamachi2Svc
+
+netsh interface set interface "Hamachi" enable
+
+net stat Hamachi2Svc
+
+start "Hamachi" "%ProgramFiles(x86)%\LogMeIn Hamachi\hamachi-2-ui.exe"
+
+goto next
+rem ------------------------------------------------------------------------------------------
 
 
 :eof
