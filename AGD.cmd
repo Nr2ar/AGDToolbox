@@ -302,7 +302,7 @@ net stop Hamachi2Svc
 
 netsh interface set interface "Hamachi" enable
 
-net stat Hamachi2Svc
+net start Hamachi2Svc
 
 start "Hamachi" "%ProgramFiles(x86)%\LogMeIn Hamachi\hamachi-2-ui.exe"
 
