@@ -73,6 +73,7 @@ IF "%~1"=="spooler" goto %~1
 IF "%~1"=="printers" goto %~1
 IF "%~1"=="pesadilla" goto %~1
 IF "%~1"=="hamachi" goto %~1
+IF "%~1"=="activatrix" goto %~1
 
 :next
 SHIFT
@@ -92,6 +93,7 @@ echo    spooler: Vacía cola de impresión
 echo    printers: Abre impresoras en Windows 11
 echo    pesadilla: Parche PrintNightmare
 echo    hamachi: Intenta corregir Hamachi
+echo    hamachi: Reactiva Windows
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
