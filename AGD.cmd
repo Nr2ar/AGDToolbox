@@ -310,6 +310,87 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
+REM //ANCHOR - Activatrix
+:Activatrix
+
+echo.
+echo * Activatrix
+
+call :getadmin
+
+set Windows 10 Pro=W269N-WFGWX-YVC9B-4J6C9-T83GX
+set Windows 10 Home=TX9XD-98N7V-6WMQ6-BX7FG-H8Q99
+set Windows 10 Enterprise LTSC 2019=M7XTQ-FN8P6-TTKYV-9D4CC-J462D
+set Windows 10 Pro for Workstations=NRG8B-VKK3Q-CXVCJ-9G2XF-6Q84J
+
+set Windows 7 Professional=FJ82H-XT6CR-J8D7P-XQJJ2-GPDD4
+set Windows 7 Ultimate=RHTBY-VWY6D-QJRJ9-JGQ3X-Q2289
+
+set Windows Server 2008 Standard=TM24T-X9RMF-VWXK6-X8JC9-BFGM2
+set Windows Server 2008 Entreprise=YQGMW-MPWTJ-34KDK-48M3W-X4Q6V
+set Windows Server 2008 Datacenter=7M67G-PC374-GR742-YH8V4-TCBY3
+set Windows Server 2008 R2 Standard=YC6KT-GKW9T-YTKYR-T4X34-R7VHC
+set Windows Server 2008 R2 Enterprise=489J6-VHDMP-X63PK-3K798-CPX3Y
+set Windows Server 2008 R2 Datacenter=74YFP-3QFB3-KQT8W-PMXWJ-7M648
+set Windows Server 2012 Standard=XC9B7-NBPP2-83J2H-RHMBY-92BT4
+set Windows Server 2012 Datacenter=48HP8-DN98B-MYWDG-T2DCC-8W83P
+set Windows Server 2012 R2 Standard=D2N9P-3P6X9-2R39C-7RTCD-MDVJX
+set Windows Server 2012 R2 Datacenter=W3GGN-FT8W3-Y4M27-J84CP-Q3VJ9
+set Windows 8.1 Pro=GCRJD-8NW9H-F2CDX-CCM8D-9D6T9
+set Windows Server 2016 Datacenter=CB7KF-BWN84-R7R2Y-793K2-8XDDG
+set Windows Server 2016 Standard=WC2BQ-8NRM3-FDDYY-2BFGV-KHKQY
+set Windows Server 2016 Essentials=JCKRF-N37P4-C2D82-9YXRT-4M63B
+set Windows Server 2019 Standard=N69G4-B89J2-4G8F4-WWYCC-J464C
+set Windows Server 2019 Datacenter=WMDGN-G9PQG-XVVXX-R3X43-63DFG
+set Windows Server 2022 Standard=VDYBN-27WPP-V4HQT-9VMD4-VMK7H
+set Windows Server 2022 Datacenter=WX4NM-KYWYW-QJJR4-XV3QB-6VM33
+set Windows Server 2022 Datacenter Azure Edition=NTBV8-9K7Q8-V27C6-M2BTV-KHMXV
+
+echo  - Verificando version de Windows...
+
+for /f "tokens=3*" %%i IN ('reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v ProductName ^| Find "ProductName"') DO set OSVersion=%%i %%j
+
+SETLOCAL EnableDelayedExpansion
+
+if "!%OSVersion%!"=="" (
+    cls
+    echo AGD Activatrix
+    echo --------------
+    color CF
+    echo.
+    echo %OSVersion%
+    echo.
+    echo No soportado [reportar a Nicolas]
+    echo.
+    pause
+    exit /b
+)
+
+
+echo.
+echo  - Activando %OSVersion%
+echo    - Configurando servidor KMS
+start /b /wait cscript //nologo "%systemroot%\system32\slmgr.vbs" /skms kms8.msguides.com >nul 2>&1
+
+echo    - Cargando numero de serie
+start /b /wait cscript //nologo "%systemroot%\system32\slmgr.vbs" /ipk %OSVersion% >nul 2>&1
+
+echo    - Activando Windows
+start /b /wait cscript //nologo "%systemroot%\system32\slmgr.vbs" /ato >nul 2>&1
+
+
+echo.
+echo  - Resultado:
+echo.
+cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "icen"
+
+timeout 5
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
+
+
 :eof
 
 echo FIN
