@@ -386,8 +386,6 @@ echo  - Resultado:
 echo.
 cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "icen"
 
-timeout 5
-
 goto next
 rem ------------------------------------------------------------------------------------------
 
