@@ -394,6 +394,22 @@ rem ----------------------------------------------------------------------------
 
 
 
+
+REM //ANCHOR - trueSoftland
+:trueSoftland
+
+echo.
+echo * True: Softland
+
+call :GetAdmin
+
+\\qtrue-files.quimicatrue.com.ar\AGD$\Softland\unSoftland.exe
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
+
+
 :eof
 
 echo FIN
