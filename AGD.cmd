@@ -74,6 +74,7 @@ IF "%~1"=="printers" goto %~1
 IF "%~1"=="pesadilla" goto %~1
 IF "%~1"=="hamachi" goto %~1
 IF "%~1"=="activatrix" goto %~1
+IF "%~1"=="truesoftland" goto %~1
 
 :next
 SHIFT
