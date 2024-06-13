@@ -391,7 +391,7 @@ echo.
 cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "icen"
 cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "Noti"
 
-if %ERRORLEVEL% == 0 (
+if %ERRORLEVEL% EQU 0 (
   powershell.exe -NonInteractive -Command irm https://get.activated.win ^| iex
 )
 
