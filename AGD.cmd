@@ -5,11 +5,11 @@ mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
 rem auto-install command line
-rem curl -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
+rem curl -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
 
 rem Definir variables
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
-set curl=curl.exe -H "Cache-Control: no-cache, no-store" --remote-name
+set curl=curl.exe -k -H "Cache-Control: no-cache, no-store" --remote-name
 set ftp1=ftp://live
 set ftp2=SoyLive
 set ftp3=ftp.nr2.com
@@ -129,7 +129,7 @@ schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolb
 
 :install-update
 echo on
-curl.exe -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
+curl.exe -k -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
 
 
 rem //REVIEW - no se que hace esto
