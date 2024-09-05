@@ -75,6 +75,7 @@ IF "%~1"=="pesadilla" goto %~1
 IF "%~1"=="hamachi" goto %~1
 IF "%~1"=="activatrix" goto %~1
 IF "%~1"=="truesoftland" goto %~1
+IF "%~1"=="confianza" goto %~1
 
 :next
 SHIFT
@@ -94,7 +95,8 @@ echo    spooler: Vacía cola de impresión
 echo    printers: Abre impresoras en Windows 11
 echo    pesadilla: Parche PrintNightmare
 echo    hamachi: Intenta corregir Hamachi
-echo    hamachi: Reactiva Windows
+echo    activatrix: Reactiva Windows
+echo    confianza: Repara relación de confianza con dominio
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -408,6 +410,19 @@ rem ----------------------------------------------------------------------------
 
 
 
+REM //ANCHOR - confianza
+:confianza
+
+echo.
+echo * Confianza
+
+call :GetAdmin
+
+powershell -command "Test-ComputerSecureChannel -Repair -Server qtrue-dc1.quimicatrue.com.ar -Credential quimicatrue.com.ar\_arcserve -Verbose"
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
 
 REM //ANCHOR - trueSoftland
 :trueSoftland
@@ -421,7 +436,6 @@ call :GetAdmin
 
 goto next
 rem ------------------------------------------------------------------------------------------
-
 
 
 :eof
