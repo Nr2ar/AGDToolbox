@@ -476,7 +476,7 @@ echo.
 echo   - Tamaño inicial de WinSxS: %InitialSizeGB% GB
 
 :: Run DISM Cleanup
-dism.exe /online /Cleanup-Image /StartComponentCleanup
+start /wait dism.exe /online /Cleanup-Image /StartComponentCleanup
 
 if %ERRORLEVEL% NEQ 0 (
         echo.
@@ -485,9 +485,9 @@ if %ERRORLEVEL% NEQ 0 (
         pause
 )
 
-dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
+start /wait dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
 
-dism.exe /online /Cleanup-Image /SPSuperseded
+start /wait dism.exe /online /Cleanup-Image /SPSuperseded
 
 :: Get the final size of WinSxS folder in GB (after cleanup) using PowerShell
 for /f %%I in ('powershell -command "(Get-ChildItem '%Windir%\WinSXS' -Recurse | Measure-Object -Property Length -Sum).Sum / 1GB -as [int]"') do set FinalSizeGB=%%I
@@ -506,9 +506,6 @@ for /f %%I in ('powershell -command "Get-Date -Format HH:mm:ss"') do set EndTime
 for /f %%I in ('powershell -command "(New-TimeSpan -Start (Get-Date '%StartTime%') -End (Get-Date '%EndTime%')).ToString()"') do set ElapsedTime=%%I
 echo.
 echo   - Tiempo total: %ElapsedTime%
-
-timeout 10
-
 
 goto next
 rem ------------------------------------------------------------------------------------------
