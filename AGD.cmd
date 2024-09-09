@@ -478,6 +478,18 @@ echo   - Tamaño inicial de WinSxS: %InitialSizeGB% GB
 :: Run DISM Cleanup
 dism.exe /online /Cleanup-Image /StartComponentCleanup
 
+if %ERRORLEVEL% NEQ 0 (
+    if %ERRORLEVEL% EQU 0x800f0806 (
+        echo.
+        echo    - Operaciones pendientes. Reiniciar Windows antes de continuar.
+        pause
+    ) else (
+        echo.
+        echo    - DISM falló con error: %ERRORLEVEL%.
+        pause
+    )
+)
+
 dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
 
 dism.exe /online /Cleanup-Image /SPSuperseded
