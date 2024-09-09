@@ -76,6 +76,7 @@ IF "%~1"=="hamachi" goto %~1
 IF "%~1"=="activatrix" goto %~1
 IF "%~1"=="truesoftland" goto %~1
 IF "%~1"=="confianza" goto %~1
+IF "%~1"=="cleanup" goto %~1
 
 :next
 SHIFT
@@ -97,6 +98,7 @@ echo    pesadilla: Parche PrintNightmare
 echo    hamachi: Intenta corregir Hamachi
 echo    activatrix: Reactiva Windows
 echo    confianza: Repara relación de confianza con dominio
+echo    cleanup: Limpieza del Almacen de Componentes con DISM
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -442,6 +444,27 @@ powershell.exe -command "Test-ComputerSecureChannel -Repair -Server %DC%  -Verbo
 
 goto next
 rem ------------------------------------------------------------------------------------------
+
+
+REM //ANCHOR - cleanup
+:confianza
+
+echo.
+echo * DISM Cleanup
+
+call :GetAdmin
+
+dism.exe /online /Cleanup-Image /StartComponentCleanup
+
+dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
+
+dism.exe /online /Cleanup-Image /SPSuperseded
+
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
+
 
 
 
