@@ -454,11 +454,35 @@ echo * DISM Cleanup
 
 call :GetAdmin
 
+setlocal
+
+:: Get the start time using PowerShell
+for /f %%I in ('powershell -command "Get-Date -Format HH:mm:ss"') do set StartTime=%%I
+
+:: Get the initial size of WinSxS folder in GB (before cleanup) using PowerShell
+for /f %%I in ('powershell -command "(Get-ChildItem '%Windir%\WinSXS' -Recurse | Measure-Object -Property Length -Sum).Sum / 1GB -as [int]"') do set InitialSizeGB=%%I
+echo Tamaño inicial de WinSxS: %InitialSizeGB% GB
+
+:: Run DISM Cleanup
 dism.exe /online /Cleanup-Image /StartComponentCleanup
 
 dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
 
 dism.exe /online /Cleanup-Image /SPSuperseded
+
+:: Get the final size of WinSxS folder in GB (after cleanup) using PowerShell
+for /f %%I in ('powershell -command "(Get-ChildItem '%Windir%\WinSXS' -Recurse | Measure-Object -Property Length -Sum).Sum / 1GB -as [int]"') do set FinalSizeGB=%%I
+echo Tamaño final de WinSxS: %FinalSizeGB% GB
+
+:: Calculate space gained
+set /a SpaceGainedGB=%InitialSizeGB%-%FinalSizeGB%
+echo Espacio recuperado: %SpaceGainedGB% GB
+
+:: Calculate time taken for cleanup using PowerShell
+for /f %%I in ('powershell -command "(New-TimeSpan -Start (Get-Date '%StartTime%') -End (Get-Date '%EndTime%')).ToString()"') do set ElapsedTime=%%I
+echo Tiempo total: %ElapsedTime%
+
+timeout 10
 
 
 goto next
