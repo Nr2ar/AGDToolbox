@@ -409,21 +409,6 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
-
-REM //ANCHOR - confianza
-:confianza
-
-echo.
-echo * Confianza
-
-call :GetAdmin
-
-powershell -command "Test-ComputerSecureChannel -Repair -Server qtrue-dc1.quimicatrue.com.ar -Credential quimicatrue.com.ar\_arcserve -Verbose"
-
-goto next
-rem ------------------------------------------------------------------------------------------
-
-
 REM //ANCHOR - trueSoftland
 :trueSoftland
 
@@ -438,7 +423,30 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
+REM //ANCHOR - confianza
+:confianza
+
+echo.
+echo * Confianza
+
+call :GetAdmin
+
+rem powershell.exe -command "Test-ComputerSecureChannel -Repair -Server qtrue-dc1.quimicatrue.com.ar -Credential quimicatrue.com.ar\_arcserve -Verbose"
+
+:: Get the domain controller and FQDN using PowerShell
+for /f %%i in ('powershell.exe -command "(Get-ADDomainController -Discover -Service PrimaryDC).Hostname"') do set DC=%%i
+for /f %%i in ('powershell.exe -command "$env:USERDNSDOMAIN"') do set FQDN=%%i
+
+:: Run the original PowerShell command with dynamic variables
+powershell.exe -command "Test-ComputerSecureChannel -Repair -Server %DC%  -Verbose"
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
+
+
 :eof
+rem Fin del archivo
 
 echo FIN
 timeout 5
