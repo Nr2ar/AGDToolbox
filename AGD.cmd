@@ -447,7 +447,7 @@ rem ----------------------------------------------------------------------------
 
 
 REM //ANCHOR - cleanup
-:confianza
+:cleanup
 
 echo.
 echo * DISM Cleanup
