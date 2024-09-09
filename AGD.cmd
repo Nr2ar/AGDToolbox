@@ -433,14 +433,25 @@ echo * Confianza
 
 call :GetAdmin
 
-rem powershell.exe -command "Test-ComputerSecureChannel -Repair -Server qtrue-dc1.quimicatrue.com.ar -Credential quimicatrue.com.ar\_arcserve -Verbose"
+:: Get the domain controller (DC1) using nltest
+for /f "tokens=2 delims=:" %%i in ('nltest /dsgetdc:%userdomain% ^| findstr /i "DC:"') do (
+    set DC=%%i
+    goto :DC_FOUND
+)
 
-:: Get the domain controller and FQDN using PowerShell
-for /f %%i in ('powershell.exe -command "(Get-ADDomainController -Discover -Service PrimaryDC).Hostname"') do set DC=%%i
-for /f %%i in ('powershell.exe -command "$env:USERDNSDOMAIN"') do set FQDN=%%i
+:DC_FOUND
+:: Remove leading \\ from the DC variable
+set "DC=%DC:\\=%"
+:: Get the fully qualified domain name (FQDN) from environment variable
+set FQDN=%USERDNSDOMAIN%
+
+:: Combine the FQDN and username for credentials
+set CREDENTIAL=%FQDN%\
 
 :: Run the original PowerShell command with dynamic variables
-powershell.exe -command "Test-ComputerSecureChannel -Repair -Server %DC%  -Verbose"
+powershell.exe -command "Test-ComputerSecureChannel -Repair -Server %DC%.%FQDN% -Credential %CREDENTIAL% -Verbose"
+
+timeout 5
 
 goto next
 rem ------------------------------------------------------------------------------------------
@@ -461,7 +472,8 @@ for /f %%I in ('powershell -command "Get-Date -Format HH:mm:ss"') do set StartTi
 
 :: Get the initial size of WinSxS folder in GB (before cleanup) using PowerShell
 for /f %%I in ('powershell -command "(Get-ChildItem '%Windir%\WinSXS' -Recurse | Measure-Object -Property Length -Sum).Sum / 1GB -as [int]"') do set InitialSizeGB=%%I
-echo Tamaño inicial de WinSxS: %InitialSizeGB% GB
+echo.
+echo   - Tamaño inicial de WinSxS: %InitialSizeGB% GB
 
 :: Run DISM Cleanup
 dism.exe /online /Cleanup-Image /StartComponentCleanup
@@ -472,15 +484,21 @@ dism.exe /online /Cleanup-Image /SPSuperseded
 
 :: Get the final size of WinSxS folder in GB (after cleanup) using PowerShell
 for /f %%I in ('powershell -command "(Get-ChildItem '%Windir%\WinSXS' -Recurse | Measure-Object -Property Length -Sum).Sum / 1GB -as [int]"') do set FinalSizeGB=%%I
-echo Tamaño final de WinSxS: %FinalSizeGB% GB
+echo.
+echo   - Tamaño final de WinSxS: %FinalSizeGB% GB
 
 :: Calculate space gained
 set /a SpaceGainedGB=%InitialSizeGB%-%FinalSizeGB%
-echo Espacio recuperado: %SpaceGainedGB% GB
+echo.
+echo   - Espacio recuperado: %SpaceGainedGB% GB
+
+:: Get the end time using PowerShell
+for /f %%I in ('powershell -command "Get-Date -Format HH:mm:ss"') do set EndTime=%%I
 
 :: Calculate time taken for cleanup using PowerShell
 for /f %%I in ('powershell -command "(New-TimeSpan -Start (Get-Date '%StartTime%') -End (Get-Date '%EndTime%')).ToString()"') do set ElapsedTime=%%I
-echo Tiempo total: %ElapsedTime%
+echo.
+echo   - Tiempo total: %ElapsedTime%
 
 timeout 10
 
