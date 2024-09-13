@@ -519,8 +519,8 @@ echo.
 echo * True OneDrive
 echo.
 
-reg add HKCU\SOFTWARE\Microsoft\OneDrive /v EnableADAL /t REG_DWORD /d 2
-reg add HKCU\SOFTWARE\Microsoft\OneDrive /v DisableTutorial /t REG_DWORD /d 1
+reg add /f HKCU\SOFTWARE\Microsoft\OneDrive /v EnableADAL /t REG_DWORD /d 2
+reg add /f HKCU\SOFTWARE\Microsoft\OneDrive /v DisableTutorial /t REG_DWORD /d 1
 
 call :GetAdmin
 
