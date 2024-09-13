@@ -77,7 +77,7 @@ IF "%~1"=="activatrix" goto %~1
 IF "%~1"=="truesoftland" goto %~1
 IF "%~1"=="confianza" goto %~1
 IF "%~1"=="cleanup" goto %~1
-IF "%~1"=="OneDrive" goto %~1
+IF "%~1"=="onedrive" goto %~1
 
 :next
 SHIFT
