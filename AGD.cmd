@@ -529,7 +529,6 @@ echo echo * Configurando OneDrive...>>"%public%\Desktop\Configurar OneDrive.cmd"
 echo start /wait "OneDrive" "%programfiles%\Microsoft OneDrive\OneDrive.exe" /configurepolicies "{\"FilesOnDemandEnabled\":true,\"KnownFolderMoveEnabled\":true,\"KnownFolders\":[{\"Name\":\"Desktop\",\"Target\":\"OneDrive\"},{\"Name\":\"Documents\",\"Target\":\"OneDrive\"}]}">>"%public%\Desktop\Configurar OneDrive.cmd"
 echo echo * Iniciando OneDrive...>>"%public%\Desktop\Configurar OneDrive.cmd"
 echo start /wait "OneDrive" "%programfiles%\Microsoft OneDrive\OneDrive.exe" /configure_business:1cb825b4-4e95-4194-b9a2-dd4a70edb1aa>>"%public%\Desktop\Configurar OneDrive.cmd"
-echo del "%public%\Desktop\Configurar OneDrive.cmd">>"%public%\Desktop\Configurar OneDrive.cmd"
 
 echo   - Descargando OneDrive...
 %curl% https://oneclient.sfx.ms/Win/Installers/24.161.0811.0001/amd64/OneDriveSetup.exe
@@ -540,6 +539,10 @@ del OneDriveSetup.exe
 
 echo   - Iniciando...
 start /wait explorer.exe "%public%\Desktop\Configurar OneDrive.cmd"
+
+pause 
+
+del "%public%\Desktop\Configurar OneDrive.cmd"
 
 goto next
 rem ------------------------------------------------------------------------------------------
