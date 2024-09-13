@@ -519,16 +519,18 @@ echo.
 echo * True OneDrive
 echo.
 
-reg add HKCU\SOFTWARE\Microsoft\OneDrive /v EnableADAL /t REG_DWORD /d 2 /f
-reg add HKCU\SOFTWARE\Microsoft\OneDrive /v DisableTutorial /t REG_DWORD /d 1 /f
+reg add HKCU\SOFTWARE\Microsoft\OneDrive /v EnableADAL /t REG_DWORD /d 2 /f>nul
+reg add HKCU\SOFTWARE\Microsoft\OneDrive /v DisableTutorial /t REG_DWORD /d 1 /f>nul
 
 call :GetAdmin
 
-echo @echo off>"%public%\Desktop\Configurar OneDrive.cmd"
-echo echo * Configurando OneDrive...>>"%public%\Desktop\Configurar OneDrive.cmd"
-echo start /wait "OneDrive" "%programfiles%\Microsoft OneDrive\OneDrive.exe" /configurepolicies "{\"FilesOnDemandEnabled\":true,\"KnownFolderMoveEnabled\":true,\"KnownFolders\":[{\"Name\":\"Desktop\",\"Target\":\"OneDrive\"},{\"Name\":\"Documents\",\"Target\":\"OneDrive\"}]}">>"%public%\Desktop\Configurar OneDrive.cmd"
-echo echo * Iniciando OneDrive...>>"%public%\Desktop\Configurar OneDrive.cmd"
-echo start /wait "OneDrive" "%programfiles%\Microsoft OneDrive\OneDrive.exe" /configure_business:1cb825b4-4e95-4194-b9a2-dd4a70edb1aa>>"%public%\Desktop\Configurar OneDrive.cmd"
+echo @echo off>"%windir%\Temp\Configurar OneDrive.cmd"
+echo echo * Configurando OneDrive...>>"%windir%\Temp\Configurar OneDrive.cmd"
+echo start /wait "OneDrive" "%programfiles%\Microsoft OneDrive\OneDrive.exe" /configurepolicies "{\"FilesOnDemandEnabled\":true,\"KnownFolderMoveEnabled\":true,\"KnownFolders\":[{\"Name\":\"Desktop\",\"Target\":\"OneDrive\"},{\"Name\":\"Documents\",\"Target\":\"OneDrive\"}]}">>"%windir%\Temp\Configurar OneDrive.cmd"
+echo echo * Iniciando OneDrive...>>"%windir%\Temp\Configurar OneDrive.cmd"
+echo start /wait "OneDrive" "%programfiles%\Microsoft OneDrive\OneDrive.exe" /configure_business:1cb825b4-4e95-4194-b9a2-dd4a70edb1aa>>"%windir%\Temp\Configurar OneDrive.cmd"
+echo explorer.exe odopen://launch>>"%windir%\Temp\Configurar OneDrive.cmd"
+echo exit>>"%windir%\Temp\Configurar OneDrive.cmd"
 
 echo   - Descargando OneDrive...
 %curl% https://oneclient.sfx.ms/Win/Installers/24.161.0811.0001/amd64/OneDriveSetup.exe
@@ -538,11 +540,7 @@ start /wait OneDriveSetup.exe /silent /allusers
 del OneDriveSetup.exe
 
 echo   - Iniciando...
-start /wait explorer.exe "%public%\Desktop\Configurar OneDrive.cmd"
-
-pause 
-
-del "%public%\Desktop\Configurar OneDrive.cmd"
+start /wait explorer.exe "%windir%\Temp\Configurar OneDrive.cmd"
 
 goto next
 rem ------------------------------------------------------------------------------------------
