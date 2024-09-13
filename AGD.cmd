@@ -77,6 +77,7 @@ IF "%~1"=="activatrix" goto %~1
 IF "%~1"=="truesoftland" goto %~1
 IF "%~1"=="confianza" goto %~1
 IF "%~1"=="cleanup" goto %~1
+IF "%~1"=="OneDrive" goto %~1
 
 :next
 SHIFT
@@ -511,7 +512,37 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
+REM //ANCHOR - OneDrive
+:onedrive
 
+echo.
+echo * True OneDrive
+echo.
+
+reg add HKCU\SOFTWARE\Microsoft\OneDrive /v EnableADAL /t REG_DWORD /d 2
+reg add HKCU\SOFTWARE\Microsoft\OneDrive /v DisableTutorial /t REG_DWORD /d 1
+
+call :GetAdmin
+
+echo @echo off>"%public%\Desktop\Configurar OneDrive.cmd"
+echo echo * Configurando OneDrive...>>"%public%\Desktop\Configurar OneDrive.cmd"
+echo start /wait "OneDrive" "%programfiles%\Microsoft OneDrive\OneDrive.exe" /configurepolicies "{\"FilesOnDemandEnabled\":true,\"KnownFolderMoveEnabled\":true,\"KnownFolders\":[{\"Name\":\"Desktop\",\"Target\":\"OneDrive\"},{\"Name\":\"Documents\",\"Target\":\"OneDrive\"}]}">>"%public%\Desktop\Configurar OneDrive.cmd"
+echo echo * Iniciando OneDrive...>>"%public%\Desktop\Configurar OneDrive.cmd"
+echo start /wait "OneDrive" "%programfiles%\Microsoft OneDrive\OneDrive.exe" /configure_business:1cb825b4-4e95-4194-b9a2-dd4a70edb1aa>>"%public%\Desktop\Configurar OneDrive.cmd"
+echo del "%public%\Desktop\Configurar OneDrive.cmd">>"%public%\Desktop\Configurar OneDrive.cmd"
+
+echo   - Descargando OneDrive...
+%curl% https://oneclient.sfx.ms/Win/Installers/24.161.0811.0001/amd64/OneDriveSetup.exe
+
+echo   - Instalando...
+start /wait OneDriveSetup.exe /silent /allusers
+del OneDriveSetup.exe
+
+echo   - Iniciando...
+explorer.exe "%public%\Desktop\Configurar OneDrive.cmd"
+
+goto next
+rem ------------------------------------------------------------------------------------------
 
 
 :eof
