@@ -539,7 +539,7 @@ start /wait OneDriveSetup.exe /silent /allusers
 del OneDriveSetup.exe
 
 echo   - Iniciando...
-explorer.exe "%public%\Desktop\Configurar OneDrive.cmd"
+start /wait explorer.exe "%public%\Desktop\Configurar OneDrive.cmd"
 
 goto next
 rem ------------------------------------------------------------------------------------------
