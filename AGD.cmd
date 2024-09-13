@@ -531,6 +531,7 @@ echo start /wait "OneDrive" "%programfiles%\Microsoft OneDrive\OneDrive.exe" /co
 echo echo * Iniciando OneDrive...>>"%SystemDrive%\Temp\Configurar OneDrive.cmd"
 echo start /wait "OneDrive" "%programfiles%\Microsoft OneDrive\OneDrive.exe" /configure_business:1cb825b4-4e95-4194-b9a2-dd4a70edb1aa>>"%SystemDrive%\Temp\Configurar OneDrive.cmd"
 echo explorer.exe odopen://launch>>"%SystemDrive%\Temp\Configurar OneDrive.cmd"
+echo del "%SystemDrive%\Temp\Configurar OneDrive.cmd">>"%SystemDrive%\Temp\Configurar OneDrive.cmd"
 echo exit>>"%SystemDrive%\Temp\Configurar OneDrive.cmd"
 
 echo   - Descargando OneDrive...
