@@ -434,6 +434,14 @@ echo * Confianza
 
 call :GetAdmin
 
+powershell.exe -command "Test-ComputerSecureChannel -Repair -Server qtrue-dc1.quimicatrue.com.ar -Credential quimicatrue.com.ar\ -Verbose"
+
+timeout 5
+
+goto next
+
+ REM LO SIGUIENTE NO VA POR AHORA HASTA QUE LO HAGA FUNCIONAR
+
 :: Get the domain controller (DC1) using nltest
 for /f "tokens=2 delims=:" %%i in ('nltest /dsgetdc:%userdomain% ^| findstr /i "DC:"') do (
     set DC=%%i
