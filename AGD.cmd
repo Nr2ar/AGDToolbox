@@ -90,6 +90,17 @@ REM //ANCHOR - Help
 :help
 echo  * AYUDA *
 echo.
+
+ echo  _________  ________  ________  ___       ________  ________     ___    ___ 
+ echo ^|\___   ___\\   __  \^|\   __  \^|\  \     ^|\   __  \^|\   __  \   ^|\  \  /  /^|
+ echo \^|___ \  \_\ \  \^|\  \ \  \^|\  \ \  \    \ \  \^|\ /\ \  \^|\  \  \ \  \/  / /
+ echo      \ \  \ \ \  \\\  \ \  \\\  \ \  \    \ \   __  \ \  \\\  \  \ \    / / 
+ echo       \ \  \ \ \  \\\  \ \  \\\  \ \  \____\ \  \^|\  \ \  \\\  \  /     \/  
+ echo        \ \__\ \ \_______\ \_______\ \_______\ \_______\ \_______\/  /\   \  
+ echo         \^|__^|  \^|_______^|\^|_______^|\^|_______^|\^|_______^|\^|_______/__/ /\ __\ 
+ echo                                                                 ^|__^|/ \^|__^| 
+
+echo.
 echo    ip: Muestra información de red y Windows
 echo    total: Instalar Total Commander
 echo    reteam: re/Instalacion de Teamviewer 13
