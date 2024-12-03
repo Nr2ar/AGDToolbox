@@ -542,8 +542,11 @@ echo * Evento: Poweroff
 
 call :GetAdmin
 
-powershell -noprofile -Command "Get-WinEvent -FilterHashtable @{LogName='System'; Id=@(6008)} | Select-Object TimeCreated, Id, LevelDisplayName, Message | Sort-Object TimeCreated | Format-Table -AutoSize"
+powershell -noprofile -Command "Get-WinEvent -FilterHashtable @{LogName='System'; Id=@(6008)} | Select-Object TimeCreated, Message | Sort-Object TimeCreated | Format-Table -AutoSize" | clip
+powershell -noprofile -Command "Get-WinEvent -FilterHashtable @{LogName='System'; Id=@(6008)} | Select-Object TimeCreated, Message | Sort-Object TimeCreated | Format-Table -AutoSize"
 
+echo.
+echo  (informacion copiada al portapapeles)
 pause
 
 goto next
