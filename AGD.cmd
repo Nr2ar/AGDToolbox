@@ -77,6 +77,7 @@ IF "%~1"=="activatrix" goto %~1
 IF "%~1"=="truesoftland" goto %~1
 IF "%~1"=="confianza" goto %~1
 IF "%~1"=="cleanup" goto %~1
+IF "%~1"=="evento-poweroff" goto %~1
 IF "%~1"=="onedrive" goto %~1
 
 :next
@@ -111,6 +112,7 @@ echo    hamachi: Intenta corregir Hamachi
 echo    activatrix: Reactiva Windows
 echo    confianza: Repara relación de confianza con dominio
 echo    cleanup: Limpieza del Almacen de Componentes con DISM
+echo    evento-poweroff: Log de apagados forzosos de Windows
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -526,6 +528,41 @@ for /f %%I in ('powershell -command "Get-Date -Format HH:mm:ss"') do set EndTime
 for /f %%I in ('powershell -command "(New-TimeSpan -Start (Get-Date '%StartTime%') -End (Get-Date '%EndTime%')).ToString()"') do set ElapsedTime=%%I
 echo.
 echo   - Tiempo total: %ElapsedTime%
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
+
+
+REM //ANCHOR - evento-poweroff
+:evento-poweroff
+
+echo.
+echo * Evento: Poweroff
+
+call :GetAdmin
+
+powershell -NoProfile -Command ^
+    "& { $StartTime = (Get-Date).AddDays(-120); `
+    $EndTime = Get-Date; `
+    $Events = Get-WinEvent -FilterHashtable @{ `
+        LogName = 'System'; `
+        ProviderName = 'Microsoft-Windows-Kernel-Power'; `
+        Id = 41; `
+        StartTime = $StartTime; `
+        EndTime = $EndTime `
+    } | Select-Object TimeCreated, Id, LevelDisplayName, Message; `
+    $UnexpectedShutdowns = Get-WinEvent -FilterHashtable @{ `
+        LogName = 'System'; `
+        Id = 6008; `
+        StartTime = $StartTime; `
+        EndTime = $EndTime `
+    } | Select-Object TimeCreated, Id, LevelDisplayName, Message; `
+    $CombinedEvents = $Events + $UnexpectedShutdowns | Sort-Object TimeCreated; `
+    Write-Output 'Forceful shutdown or power-off events in the System log:'; `
+    $CombinedEvents | Format-Table -AutoSize; }"
+
+pause
 
 goto next
 rem ------------------------------------------------------------------------------------------
