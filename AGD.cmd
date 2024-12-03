@@ -559,7 +559,6 @@ powershell -NoProfile -Command ^
         EndTime = $EndTime `
     } | Select-Object TimeCreated, Id, LevelDisplayName, Message; `
     $CombinedEvents = $Events + $UnexpectedShutdowns | Sort-Object TimeCreated; `
-    Write-Output 'Forceful shutdown or power-off events in the System log:'; `
     $CombinedEvents | Format-Table -AutoSize; }"
 
 pause
