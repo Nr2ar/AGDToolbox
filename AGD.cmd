@@ -542,24 +542,7 @@ echo * Evento: Poweroff
 
 call :GetAdmin
 
-powershell -NoProfile -Command ^
-    "& { $StartTime = (Get-Date).AddDays(-120); `
-    $EndTime = Get-Date; `
-    $Events = Get-WinEvent -FilterHashtable @{ `
-        LogName = 'System'; `
-        ProviderName = 'Microsoft-Windows-Kernel-Power'; `
-        Id = 41; `
-        StartTime = $StartTime; `
-        EndTime = $EndTime `
-    } | Select-Object TimeCreated, Id, LevelDisplayName, Message; `
-    $UnexpectedShutdowns = Get-WinEvent -FilterHashtable @{ `
-        LogName = 'System'; `
-        Id = 6008; `
-        StartTime = $StartTime; `
-        EndTime = $EndTime `
-    } | Select-Object TimeCreated, Id, LevelDisplayName, Message; `
-    $CombinedEvents = $Events + $UnexpectedShutdowns | Sort-Object TimeCreated; `
-    $CombinedEvents | Format-Table -AutoSize; }"
+powershell -noprofile -Command "Get-WinEvent -FilterHashtable @{LogName='System'; Id=@(6008)} | Select-Object TimeCreated, Id, LevelDisplayName, Message | Sort-Object TimeCreated | Format-Table -AutoSize"
 
 pause
 
