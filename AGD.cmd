@@ -78,6 +78,7 @@ IF "%~1"=="truesoftland" goto %~1
 IF "%~1"=="confianza" goto %~1
 IF "%~1"=="cleanup" goto %~1
 IF "%~1"=="evento-poweroff" goto %~1
+IF "%~1"=="internet" goto %~1
 IF "%~1"=="onedrive" goto %~1
 
 :next
@@ -113,6 +114,7 @@ echo    activatrix: Reactiva Windows
 echo    confianza: Repara relación de confianza con dominio
 echo    cleanup: Limpieza del Almacen de Componentes con DISM
 echo    evento-poweroff: Log de apagados forzosos de Windows
+echo    internet: Prueba de conexion y velocidad de internet
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -147,8 +149,8 @@ schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolb
 
 :install-update
 echo on
-curl.exe -k -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
-
+curl.exe --insecure -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
+curl.exe --insecure --no-clobber -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe
 
 rem //REVIEW - no se que hace esto
 if not defined AGD-Scheduled (
@@ -542,8 +544,8 @@ echo * Evento: Poweroff
 
 call :GetAdmin
 
-powershell -noprofile -Command "Get-WinEvent -FilterHashtable @{LogName='System'; Id=@(6008)} | Select-Object TimeCreated, Message | Sort-Object TimeCreated | Format-Table -AutoSize" | clip
-powershell -noprofile -Command "Get-WinEvent -FilterHashtable @{LogName='System'; Id=@(6008)} | Select-Object TimeCreated, Message | Sort-Object TimeCreated | Format-Table -AutoSize"
+powershell.exe -noprofile -Command "Get-WinEvent -FilterHashtable @{LogName='System'; Id=@(6008)} | Select-Object TimeCreated, Message | Sort-Object TimeCreated | Format-Table -AutoSize"
+powershell.exe -noprofile -Command "Get-WinEvent -FilterHashtable @{LogName='System'; Id=@(6008)} | Select-Object TimeCreated, Message | Sort-Object TimeCreated | Format-Table -AutoSize" | clip
 
 echo.
 echo  (informacion copiada al portapapeles)
@@ -552,6 +554,31 @@ pause
 goto next
 rem ------------------------------------------------------------------------------------------
 
+
+REM //ANCHOR - internet
+:internet
+
+echo.
+echo * Prueba de internet
+
+for /f %%A in ('powershell.exe -noprofile -Command "(Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object @{Expression = { $_.RouteMetric + $_.ifMetric }} | Select-Object -First 1).NextHop"') do set "internet_GW=%%A"
+
+echo.
+echo Puerta de enlace: %internet_GW%
+ping -n 1 %internet_GW% >nul
+if errorlevel 1 (
+    echo Puerta de enlace NO responde!
+    pause
+) else (
+
+    "%windir%\speedtest.exe" --accept-license --accept-gdpr
+
+    echo Gateway %internet_GW% is reachable.
+)
+
+
+goto next
+rem ------------------------------------------------------------------------------------------
 
 REM //ANCHOR - OneDrive
 :onedrive
