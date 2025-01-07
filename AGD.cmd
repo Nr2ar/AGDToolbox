@@ -220,13 +220,12 @@ echo IP Publica: %ip_public% - %ip_hostname%
 for /f %%A in ('powershell.exe -noprofile -Command "(Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object @{Expression = { $_.RouteMetric + $_.ifMetric }} | Select-Object -First 1).NextHop"') do set "internet_GW=%%A"
 
 echo.
-echo - Puerta de enlace: %internet_GW%
 ping -n 1 %internet_GW% >nul
 if errorlevel 1 (
-  echo Puerta de enlace NO responde!
+  echo Puerta de enlace %internet_GW% NO responde!
   pause
 ) else (
-  echo   - Puerta de enlace RESPONDE
+  echo   - Puerta de enlace %internet_GW% RESPONDE
 )
 
 ping -n 1 8.8.8.8 >nul
