@@ -40,13 +40,13 @@ if %~n0 == AGD-Toolbox goto install
 
 :updated
 if %~n0 == AGD-update (
-  FOR /F "usebackq" %%A IN ('%windir%\AGD-*.cmd') DO set old-size=%%~zA
+  FOR /F "usebackq" %%A IN ('%windir%\AGD-update.cmd') DO set new-size=%%~zA
   reg add "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\AGD Toolbox" /v DisplayName /d "AGD Toolbox" /f >NUL
   reg add "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\AGD Toolbox" /v DisplayVersion /d "%fileSize%" /f >NUL
 
 	move /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd" > NUL
 
-	echo Toolbox v%fileSize% actualizado de versión v!old-size!
+	echo Toolbox v!new-size! actualizado de versión v%fileSize%
 	echo.
   timeout 5
 	exit
