@@ -47,7 +47,7 @@ if %~n0 == AGD-update (
 	move /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd" > NUL
 
   if !new-size! EQU %fileSize% (
-    echo No hay actualización disponible
+    echo Toolbox v%fileSize%: No hay actualización disponible
   ) else (
 	  echo Toolbox v!new-size! actualizado de versión v%fileSize%
   )
