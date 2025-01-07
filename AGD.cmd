@@ -572,8 +572,9 @@ if errorlevel 1 (
 ) else (
 
     "%windir%\speedtest.exe" --accept-license --accept-gdpr
-
-    echo Gateway %internet_GW% is reachable.
+    
+    echo.
+    pause
 )
 
 
