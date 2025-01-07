@@ -212,6 +212,34 @@ for /f "tokens=2 delims=: " %%a in ('nslookup %ip_public% 2^>nul ^| findstr /C:"
 
 echo IP Publica: %ip_public% - %ip_hostname%
 
+for /f %%A in ('powershell.exe -noprofile -Command "(Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object @{Expression = { $_.RouteMetric + $_.ifMetric }} | Select-Object -First 1).NextHop"') do set "internet_GW=%%A"
+
+echo.
+echo - Puerta de enlace: %internet_GW%
+ping -n 1 %internet_GW% >nul
+if errorlevel 1 (
+  echo Puerta de enlace NO responde!
+  pause
+) else (
+  echo   - Puerta de enlace RESPONDE
+)
+
+ping -n 1 8.8.8.8 >nul
+if errorlevel 1 (
+  echo 8.8.8.8 NO responde!
+  pause
+) else (
+  echo   - 8.8.8.8 RESPONDE
+)
+
+ping -n 1 google.com >nul
+if errorlevel 1 (
+  echo google.com NO responde!
+  pause
+) else (
+  echo   - google.com RESPONDE
+)
+
 echo.
 
 pause
@@ -572,7 +600,6 @@ if errorlevel 1 (
 ) else (
   echo   - Puerta de enlace RESPONDE
 )
-
 
 ping -n 1 8.8.8.8 >nul
 if errorlevel 1 (
