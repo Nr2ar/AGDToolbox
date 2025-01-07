@@ -564,18 +564,36 @@ echo * Prueba de internet
 for /f %%A in ('powershell.exe -noprofile -Command "(Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object @{Expression = { $_.RouteMetric + $_.ifMetric }} | Select-Object -First 1).NextHop"') do set "internet_GW=%%A"
 
 echo.
-echo Puerta de enlace: %internet_GW%
+echo - Puerta de enlace: %internet_GW%
 ping -n 1 %internet_GW% >nul
 if errorlevel 1 (
-    echo Puerta de enlace NO responde!
-    pause
+  echo Puerta de enlace NO responde!
+  pause
 ) else (
-
-    "%windir%\speedtest.exe" --accept-license --accept-gdpr
-    
-    echo.
-    pause
+  echo   - Puerta de enlace RESPONDE
 )
+
+
+ping -n 1 8.8.8.8 >nul
+if errorlevel 1 (
+  echo 8.8.8.8 NO responde!
+  pause
+) else (
+  echo   - 8.8.8.8 RESPONDE
+)
+
+ping -n 1 google.com >nul
+if errorlevel 1 (
+  echo google.com NO responde!
+  pause
+) else (
+  echo   - google.com RESPONDE
+)
+
+"%windir%\speedtest.exe" --accept-license --accept-gdpr
+
+echo.
+pause
 
 
 goto next
