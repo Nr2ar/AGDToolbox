@@ -211,6 +211,7 @@ echo.
 
 ipconfig /all | findstr /v /i /c:"Descrip" /c:"*" /c:"Teredo" | findstr /i /c:"adapt" /c:"Ethernet" /c:"IPv4" /c:"subred" /c:"subnet" /c:"Mask" /c:"Physical" /c:"sica." /c:"Puerta" /c:"Gateway" /c:"192." /c:".0"
 
+echo.
 echo Interfaces DESHABILITADAS:
 powershell.exe -noprofile -Command "Get-NetAdapter | Where-Object { $_.Status -eq 'Disabled' } | Select-Object Name, InterfaceDescription, MacAddress | Format-Table -HideTableHeaders"
 
@@ -222,7 +223,6 @@ echo IP Publica: %ip_public% - %ip_hostname%
 
 for /f %%A in ('powershell.exe -noprofile -Command "(Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object @{Expression = { $_.RouteMetric + $_.ifMetric }} | Select-Object -First 1).NextHop"') do set "internet_GW=%%A"
 
-echo.
 ping -n 1 %internet_GW% >nul
 if errorlevel 1 (
   echo Puerta de enlace %internet_GW% NO responde!
