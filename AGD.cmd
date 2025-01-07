@@ -46,7 +46,12 @@ if %~n0 == AGD-update (
 
 	move /Y "%~dp0AGD-update.cmd" "%~dp0AGD.cmd" > NUL
 
-	echo Toolbox v!new-size! actualizado de versión v%fileSize%
+  if !new-size! EQU %fileSize% (
+    echo No hay actualización disponible
+  ) else (
+	  echo Toolbox v!new-size! actualizado de versión v%fileSize%
+  )
+
 	echo.
   timeout 5
 	exit
