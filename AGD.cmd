@@ -226,7 +226,6 @@ for /f %%A in ('powershell.exe -noprofile -Command "(Get-NetRoute -DestinationPr
 ping -n 1 %internet_GW% >nul
 if errorlevel 1 (
   echo Puerta de enlace %internet_GW% NO responde!
-  pause
 ) else (
   echo   - Puerta de enlace %internet_GW% RESPONDE
 )
@@ -234,7 +233,6 @@ if errorlevel 1 (
 ping -n 1 8.8.8.8 >nul
 if errorlevel 1 (
   echo 8.8.8.8 NO responde!
-  pause
 ) else (
   echo   - 8.8.8.8 RESPONDE
 )
@@ -242,7 +240,6 @@ if errorlevel 1 (
 ping -n 1 google.com >nul
 if errorlevel 1 (
   echo google.com NO responde!
-  pause
 ) else (
   echo   - google.com RESPONDE
 )
