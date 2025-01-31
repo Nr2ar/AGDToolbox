@@ -155,7 +155,8 @@ schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolb
 :install-update
 echo on
 curl.exe --insecure -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
-curl.exe --insecure --no-clobber -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe
+del /q "%windir%\speedtest.exe.*"
+curl.exe --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe
 
 rem //REVIEW - no se que hace esto
 if not defined AGD-Scheduled (
