@@ -213,8 +213,16 @@ echo.
 ipconfig /all | findstr /v /i /c:"Descrip" /c:"*" /c:"Teredo" | findstr /i /c:"adapt" /c:"Ethernet" /c:"IPv4" /c:"subred" /c:"subnet" /c:"Mask" /c:"Physical" /c:"sica." /c:"Puerta" /c:"Gateway" /c:"192." /c:".0"
 
 echo.
-echo Interfaces DESHABILITADAS:
-powershell.exe -noprofile -Command "Get-NetAdapter | Where-Object { $_.Status -eq 'Disabled' } | Select-Object Name, InterfaceDescription, MacAddress | Format-Table -HideTableHeaders"
+echo Buscando Interfaces DESHABILITADAS
+set Interfaces_Deshabilitadas=0
+
+for /f "delims=" %%A in ('powershell.exe -noprofile -Command ^
+    "Get-NetAdapter | Where-Object { $_.Status -eq 'Disabled' } | Select-Object Name, InterfaceDescription, MacAddress | Format-Table -HideTableHeaders"') do (
+    set Interfaces_Deshabilitadas=1
+    echo %%A
+)
+
+if %Interfaces_Deshabilitadas%==0 echo  - Todas las interfaces habilitadas
 
 echo.
 for /f "delims=" %%i in ('curl.exe ifconfig.me 2^>nul') do set "ip_public=%%i"
@@ -408,8 +416,6 @@ set Windows Server 2025 Azure Edition=XGN3F-F394H-FD2MY-PP6FD-8MCRC
 echo  - Verificando version de Windows...
 
 for /f "tokens=3*" %%i IN ('reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v ProductName ^| Find "ProductName"') DO set OSVersion=%%i %%j
-
-SETLOCAL EnableDelayedExpansion
 
 if "!%OSVersion%!"=="" (
     cls
