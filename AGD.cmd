@@ -459,7 +459,8 @@ echo.
 echo    - Abriendo MassGrave
 echo        Seleccionar opcion 1
 
-powershell.exe -NonInteractive -Command irm https://get.activated.win ^| iex
+powershell.exe -NonInteractive -Command "& { $interface = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }; $oldDNS = (Get-DnsClientServerAddress -InterfaceIndex $interface.ifIndex -AddressFamily IPv4).ServerAddresses; Set-DnsClientServerAddress -InterfaceIndex $interface.ifIndex -ServerAddresses ('8.8.8.8', '1.1.1.1'); irm https://get.activated.win | iex; Start-Sleep -Seconds 5; Set-DnsClientServerAddress -InterfaceIndex $interface.ifIndex -ServerAddresses $oldDNS }"
+
 
 
 goto next
