@@ -382,11 +382,17 @@ echo * Activatrix
 
 call :getadmin
 
+cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "icen"
+cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "Noti"
+cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "Error"
 
 powershell.exe -NonInteractive -Command "irm %AGDToolbox-URL%/get.activated.win.ps1 | iex"
 
-pause
+goto next
 
+
+REM Todo lo siguiente es viejo
+REM --------------------------
 set Windows 10 Pro=W269N-WFGWX-YVC9B-4J6C9-T83GX
 set Windows 10 Home=TX9XD-98N7V-6WMQ6-BX7FG-H8Q99
 set Windows 10 Enterprise LTSC 2019=M7XTQ-FN8P6-TTKYV-9D4CC-J462D
