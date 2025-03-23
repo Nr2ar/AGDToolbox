@@ -8,7 +8,7 @@ rem auto-install command line
 rem curl -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
 
 rem Definir variables
-set AGDToolbox-URL=http://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
+set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
 set curl=curl.exe -k -H "Cache-Control: no-cache, no-store" --remote-name
 set ftp1=ftp://live
 set ftp2=SoyLive
@@ -386,7 +386,7 @@ cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "icen"
 cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "Noti"
 cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "Error"
 
-powershell.exe -NonInteractive -Command "irm %AGDToolbox-URL%/get.activated.win.ps1 | iex"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12, [Net.SecurityProtocolType]::Tls13; irm %AGDToolbox-URL%/get.activated.win.ps1 | iex }"
 
 goto next
 
@@ -671,7 +671,7 @@ echo del "%SystemDrive%\Temp\Configurar OneDrive.cmd">>"%SystemDrive%\Temp\Confi
 echo exit>>"%SystemDrive%\Temp\Configurar OneDrive.cmd"
 
 echo   - Descargando OneDrive...
-%curl% http://oneclient.sfx.ms/Win/Installers/24.161.0811.0001/amd64/OneDriveSetup.exe
+%curl% https://oneclient.sfx.ms/Win/Installers/24.161.0811.0001/amd64/OneDriveSetup.exe
 
 echo.
 echo   - Instalando...
