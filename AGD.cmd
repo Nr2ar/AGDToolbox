@@ -213,18 +213,6 @@ echo.
 ipconfig /all | findstr /v /i /c:"Descrip" /c:"*" /c:"Teredo" | findstr /i /c:"adapt" /c:"Ethernet" /c:"IPv4" /c:"subred" /c:"subnet" /c:"Mask" /c:"Physical" /c:"sica." /c:"Puerta" /c:"Gateway" /c:"192." /c:".0"
 
 echo.
-echo Buscando Interfaces DESHABILITADAS
-set Interfaces_Deshabilitadas=0
-
-for /f "delims=" %%A in ('powershell.exe -noprofile -Command ^
-    "Get-NetAdapter | Where-Object { $_.Status -eq 'Disabled' } | Select-Object Name, InterfaceDescription, MacAddress | Format-Table -HideTableHeaders"') do (
-    set Interfaces_Deshabilitadas=1
-    echo %%A
-)
-
-if %Interfaces_Deshabilitadas%==0 echo  - Todas las interfaces habilitadas
-
-echo.
 for /f "delims=" %%i in ('curl.exe ifconfig.me 2^>nul') do set "ip_public=%%i"
 for /f "tokens=2 delims=: " %%a in ('nslookup %ip_public% 2^>nul ^| findstr /C:"Name:" /C:"Nombre:"') do set "ip_hostname=%%a"
 
@@ -252,6 +240,18 @@ if errorlevel 1 (
 ) else (
   echo   - google.com RESPONDE
 )
+
+echo.
+echo Buscando Interfaces DESHABILITADAS
+set Interfaces_Deshabilitadas=0
+
+for /f "delims=" %%A in ('powershell.exe -noprofile -Command ^
+    "Get-NetAdapter | Where-Object { $_.Status -eq 'Disabled' } | Select-Object Name, InterfaceDescription, MacAddress | Format-Table -HideTableHeaders"') do (
+    set Interfaces_Deshabilitadas=1
+    echo %%A
+)
+
+if %Interfaces_Deshabilitadas%==0 echo  - Todas las interfaces habilitadas
 
 echo.
 
