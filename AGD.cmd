@@ -85,6 +85,7 @@ IF "%~1"=="cleanup" goto %~1
 IF "%~1"=="evento-poweroff" goto %~1
 IF "%~1"=="internet" goto %~1
 IF "%~1"=="onedrive" goto %~1
+IF "%~1"=="nosleep" goto %~1
 
 :next
 SHIFT
