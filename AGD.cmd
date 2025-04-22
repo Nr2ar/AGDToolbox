@@ -120,6 +120,7 @@ echo    confianza: Repara relación de confianza con dominio
 echo    cleanup: Limpieza del Almacen de Componentes con DISM
 echo    evento-poweroff: Log de apagados forzosos de Windows
 echo    internet: Prueba de conexion y velocidad de internet
+echo    nosleep: previene que el equipo se suspenda por inactividad
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -647,6 +648,42 @@ pause
 
 goto next
 rem ------------------------------------------------------------------------------------------
+
+
+
+REM //ANCHOR - nosleep
+:nosleep
+
+echo.
+echo * No Sleep
+
+setlocal EnableDelayedExpansion
+
+:: Animación tipo burbuja
+set frame[0]=.  
+set frame[1]=o  
+set frame[2]=O  
+set frame[3]=o  
+
+set i=0
+
+:nosleeploop
+    :: Mantener el sistema despierto usando SetThreadExecutionState correctamente
+    powershell -command "Add-Type '[DllImport(\"kernel32.dll\")] public static extern bool SetThreadExecutionState(uint esFlags);' -Name NativeMethods -Namespace Power; [Power.NativeMethods]::SetThreadExecutionState(0x80000003)" >nul
+
+    :: Mostrar animación visual
+    set /a index=i %% 4
+    set "char=!frame[%index%]!"
+    <nul set /p= Evitando suspension... !char!
+    timeout /t 1 >nul
+    <nul set /p= [1000D
+
+    set /a i+=1
+goto nosleeploop
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
 
 REM //ANCHOR - OneDrive
 :onedrive
