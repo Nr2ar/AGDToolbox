@@ -656,7 +656,7 @@ REM //ANCHOR - nosleep
 :nosleep
 
 echo.
-echo * No Sleep
+echo.
 
 setlocal EnableDelayedExpansion
 
