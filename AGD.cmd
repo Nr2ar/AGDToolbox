@@ -393,7 +393,7 @@ cd "%temp%"
 
 %curl% https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/refs/heads/master/MAS/All-In-One-Version-KL/MAS_AIO.cmd
 
-start "MAS_AIO" "%temp%\MAS_AIO.cmd"
+start /b "MAS_AIO" "%temp%\MAS_AIO.cmd"
 
 goto next
 
