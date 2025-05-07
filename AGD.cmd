@@ -388,7 +388,7 @@ cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "icen"
 cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "Noti"
 cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "Error"
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12, [Net.SecurityProtocolType]::Tls13; Invoke-WebRequest -Uri "https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/refs/heads/master/MAS/All-In-One-Version-KL/MAS_AIO.cmd" -OutFile "$env:TEMP\MAS_AIO.cmd"; Start-Process -FilePath "$env:TEMP\MAS_AIO.cmd" }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri "https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/refs/heads/master/MAS/All-In-One-Version-KL/MAS_AIO.cmd" -OutFile "$env:TEMP\MAS_AIO.cmd"; Start-Process -FilePath "$env:TEMP\MAS_AIO.cmd" }"
 
 goto next
 
