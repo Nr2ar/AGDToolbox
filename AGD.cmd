@@ -155,7 +155,6 @@ for /f "tokens=1 delims= " %%a in ('time.exe /t') do set current_time=%%a
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%windir%\AGD.cmd' sched" /it /F
 
 :install-update
-echo on
 curl.exe --fail --insecure -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
 
 rem Verificar si el archivo fue descargado correctamente y no está vacío
@@ -169,9 +168,9 @@ rem Verificar si el archivo fue descargado correctamente y no está vacío
 rem Error si el archivo es demasiado pequeño
     for %%b in ("%windir%\AGD-update.cmd") do if %%~zB lss 10000 (
         echo     - Error al descargar -archivo vacio
+        timeout 5
         del "%windir%\AGD-update.cmd"
         set "download_failed=1"
-        timeout 5
         exit
     )
 
