@@ -8,7 +8,7 @@ rem auto-install command line
 rem curl -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
 
 rem Definir variables
-set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/mainAGD-update.cmd
+set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
 set curl=curl.exe -k -H "Cache-Control: no-cache, no-store" --remote-name
 set ftp1=ftp://live
 set ftp2=SoyLive
