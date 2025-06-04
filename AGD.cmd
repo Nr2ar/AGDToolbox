@@ -8,7 +8,7 @@ rem auto-install command line
 rem curl -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
 
 rem Definir variables
-set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
+set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/mainAGD-update.cmd
 set curl=curl.exe -k -H "Cache-Control: no-cache, no-store" --remote-name
 set ftp1=ftp://live
 set ftp2=SoyLive
@@ -156,11 +156,28 @@ schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolb
 
 :install-update
 echo on
-curl.exe --insecure -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
-del /q "%windir%\speedtest.exe.*"
-curl.exe --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe
+curl.exe --fail --insecure -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
 
-rem //REVIEW - no se que hace esto
+rem Verificar si el archivo fue descargado correctamente y no está vacío
+    if not exist "%windir%\AGD-update.cmd" (
+        echo     - Error al descargar - archivo no encontrado
+        set "download_failed=1"
+        timeout 5
+        exit
+    )
+
+rem Error si el archivo es demasiado pequeño
+    for %%b in ("%windir%\AGD-update.cmd") do if %%~zB lss 10000 (
+        echo     - Error al descargar -archivo vacio
+        del "%windir%\AGD-update.cmd"
+        set "download_failed=1"
+        timeout 5
+        exit
+    )
+
+del /q "%windir%\speedtest.exe.*"
+curl.exe --fail --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe
+
 if not defined AGD-Scheduled (
   if exist "%windir%\AGD-update.cmd" (start "AGD Update" "%windir%\AGD-update.cmd")
   exit
