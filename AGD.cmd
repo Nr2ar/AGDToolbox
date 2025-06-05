@@ -22,6 +22,9 @@ del /s /q "%TEMP%\%~n0.vbs" > NUL 2>&1
 REM Quien soy?
 for /f %%a in ('whoami') do set "whoami=%%a"
 
+REM Que version soy?
+for %%F in ("%~f0") do set "fileSize=%%~zF"
+
 REM Guardar Parametros
 set AGD-Params=%*
 cls
@@ -36,9 +39,6 @@ echo.
 if %~n0 == AGD-Toolbox goto install
 
 :updated
-REM Que version soy?
-for %%F in ("%~f0") do set "fileSize=%%~zF"
-
 if %~n0 == AGD-update (
   FOR /F "usebackq" %%A IN ('%windir%\AGD-update.cmd') DO set new-size=%%~zA
   reg add "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\AGD Toolbox" /v DisplayName /d "AGD Toolbox" /f >NUL
