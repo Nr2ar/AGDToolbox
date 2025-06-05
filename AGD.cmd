@@ -156,7 +156,7 @@ for /f "tokens=1 delims= " %%a in ('time.exe /t') do set current_time=%%a
 
 echo  - Creando tareas programadas...
 
-schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time:~0,-1%0 /tn "AGD\AGDToolbox_update" /tr "curl.exe -k -H "Cache-Control: no-cache, no-store" -Lo "%windir%\AGD.cmd" http://tool.agdseguridad.com.ar" /it /F
+schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time:~0,-1%0 /tn "AGD\AGDToolbox_update" /tr "curl.exe -k -Lo "%windir%\AGD.cmd" http://tool.agdseguridad.com.ar" /it /F
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time:~0,-1%1 /tn "AGD\AGDToolbox" /tr "'%windir%\AGD.cmd' sched" /it /F
 
 timeout 2 >nul
