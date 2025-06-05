@@ -391,7 +391,11 @@ netsh interface set interface "Hamachi" enable
 
 net start Hamachi2Svc
 
-start "Hamachi" "%ProgramFiles(x86)%\LogMeIn Hamachi\hamachi-2-ui.exe"
+cd "%temp%"
+
+%curl% https://secure.logmein.com/hamachi.msi
+
+hamachi.msi /passive
 
 goto next
 rem ------------------------------------------------------------------------------------------
