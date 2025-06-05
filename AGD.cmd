@@ -5,7 +5,7 @@ mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
 rem auto-install command line
-rem curl -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
+rem curl.exe -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
 
 rem Definir variables
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
@@ -18,9 +18,6 @@ set ftp=%ftp1%:%ftp2%666@%ftp3%.ar:43321
 
 rem Borrar rastros de getadmin
 del /s /q "%TEMP%\%~n0.vbs" > NUL 2>&1
-
-REM Que version soy?
-for %%F in ("%~f0") do set "fileSize=%%~zF"
 
 REM Quien soy?
 for /f %%a in ('whoami') do set "whoami=%%a"
@@ -39,6 +36,9 @@ echo.
 if %~n0 == AGD-Toolbox goto install
 
 :updated
+REM Que version soy?
+for %%F in ("%~f0") do set "fileSize=%%~zF"
+
 if %~n0 == AGD-update (
   FOR /F "usebackq" %%A IN ('%windir%\AGD-update.cmd') DO set new-size=%%~zA
   reg add "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\AGD Toolbox" /v DisplayName /d "AGD Toolbox" /f >NUL
@@ -155,12 +155,28 @@ for /f "tokens=1 delims= " %%a in ('time.exe /t') do set current_time=%%a
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%windir%\AGD.cmd' sched" /it /F
 
 :install-update
-echo on
-curl.exe --insecure -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
-del /q "%windir%\speedtest.exe.*"
-curl.exe --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe
+curl.exe --fail --insecure -H "Cache-Control: no-cache, no-store" -L -o "%windir%\AGD-update.cmd" http://tool.agdseguridad.com.ar
 
-rem //REVIEW - no se que hace esto
+rem Verificar si el archivo fue descargado correctamente
+    if not exist "%windir%\AGD-update.cmd" (
+        echo     - Error al descargar - archivo no encontrado
+        set "download_failed=1"
+        timeout 5
+        exit
+    )
+
+rem Error si el archivo es demasiado pequeño
+    for %%A in ("%windir%\AGD-update.cmd") do if %%~zA lss 10000 (
+        echo     - Error al descargar - archivo vacío
+        timeout 5
+        del "%windir%\AGD-update.cmd"
+        set "download_failed=1"
+        exit
+    )
+
+del /q "%windir%\speedtest.exe.*"
+curl.exe --fail --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe
+
 if not defined AGD-Scheduled (
   if exist "%windir%\AGD-update.cmd" (start "AGD Update" "%windir%\AGD-update.cmd")
   exit
