@@ -148,9 +148,9 @@ REM //ANCHOR - Install
 :install
 echo * Instalar AGD Toolbox
 
-:install-update
-
 call :getadmin
+
+:install-update
 
 for /f "tokens=1 delims= " %%a in ('time.exe /t') do set current_time=%%a
 
