@@ -148,6 +148,8 @@ REM //ANCHOR - Install
 :install
 echo * Instalar AGD Toolbox
 
+:install-update
+
 call :getadmin
 
 for /f "tokens=1 delims= " %%a in ('time.exe /t') do set current_time=%%a
@@ -156,8 +158,6 @@ schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time:~0,-1%0 /tn "AGD\A
 
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time:~0,-1%1 /tn "AGD\AGDToolbox" /tr "'%windir%\AGD.cmd' sched" /it /F
 
-
-:install-update
 curl.exe --fail --insecure -H "Cache-Control: no-cache, no-store" -L -o "%windir%\AGD-update.cmd" http://tool.agdseguridad.com.ar
 
 rem Verificar si el archivo fue descargado correctamente
