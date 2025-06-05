@@ -5,7 +5,7 @@ mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
 rem auto-install command line
-rem curl -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
+rem curl.exe -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
 
 rem Definir variables
 set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
@@ -155,9 +155,9 @@ for /f "tokens=1 delims= " %%a in ('time.exe /t') do set current_time=%%a
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time% /tn "AGD\AGDToolbox" /tr "'%windir%\AGD.cmd' sched" /it /F
 
 :install-update
-curl.exe --fail --insecure -H "Cache-Control: no-cache, no-store" -o "%windir%\AGD-update.cmd" %AGDToolbox-URL%/AGD.cmd
+curl.exe --fail --insecure -H "Cache-Control: no-cache, no-store" -L -o "%windir%\AGD-update.cmd" http://tool.agdseguridad.com.ar
 
-rem Verificar si el archivo fue descargado correctamente y no está vacío
+rem Verificar si el archivo fue descargado correctamente
     if not exist "%windir%\AGD-update.cmd" (
         echo     - Error al descargar - archivo no encontrado
         set "download_failed=1"
@@ -166,8 +166,8 @@ rem Verificar si el archivo fue descargado correctamente y no está vacío
     )
 
 rem Error si el archivo es demasiado pequeño
-    for %%b in ("%windir%\AGD-update.cmd") do if %%~zB lss 10000 (
-        echo     - Error al descargar -archivo vacio
+    for %%A in ("%windir%\AGD-update.cmd") do if %%~zA lss 10000 (
+        echo     - Error al descargar - archivo vacío
         timeout 5
         del "%windir%\AGD-update.cmd"
         set "download_failed=1"
