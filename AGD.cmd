@@ -86,6 +86,8 @@ IF "%~1"=="evento-poweroff" goto %~1
 IF "%~1"=="internet" goto %~1
 IF "%~1"=="onedrive" goto %~1
 IF "%~1"=="nosleep" goto %~1
+IF "%~1"=="updatewin" goto %~1
+
 
 :next
 SHIFT
@@ -121,7 +123,8 @@ echo    confianza: Repara relación de confianza con dominio
 echo    cleanup: Limpieza del Almacen de Componentes con DISM
 echo    evento-poweroff: Log de apagados forzosos de Windows
 echo    internet: Prueba de conexion y velocidad de internet
-echo    nosleep: previene que el equipo se suspenda por inactividad
+echo    nosleep: Previene que el equipo se suspenda por inactividad
+echo    updatewin: Instala todas las actualizaciones y reinicia
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -686,7 +689,7 @@ REM //ANCHOR - nosleep
 :nosleep
 
 echo.
-echo.
+echo * Bajar, instalar actualizaciones pendientes y reiniciar
 
 setlocal EnableDelayedExpansion
 
@@ -711,6 +714,20 @@ set i=0
 
     set /a i+=1
 goto nosleeploop
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
+
+REM //ANCHOR - updatewin
+:updatewin
+
+echo.
+echo.
+
+call :GetAdmin
+
+powershell.exe -noprofile -Command "Install-Module -Name PSWindowsUpdate -Force -Confirm:$false; Import-Module PSWindowsUpdate; Get-WindowsUpdate -AcceptAll -Install -AutoReboot"
 
 goto next
 rem ------------------------------------------------------------------------------------------
