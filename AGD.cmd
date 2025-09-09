@@ -724,7 +724,7 @@ REM //ANCHOR - updatewin
 
 call :GetAdmin
 
-powershell.exe -noprofile -Command Set-ExecutionPolicy Bypass -Scope Process -Force; if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) { Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; Import-PackageProvider -Name NuGet -Force }; Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted; Install-Module -Name PSWindowsUpdate -Force; Import-Module PSWindowsUpdate -Force; Get-WindowsUpdate -AcceptAll -Install -AutoReboot"
+powershell.exe -noprofile -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) { Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force; Import-PackageProvider -Name NuGet -Force }; Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted; Install-Module -Name PSWindowsUpdate -Force; Import-Module PSWindowsUpdate -Force; Get-WindowsUpdate -AcceptAll -Install -AutoReboot"
 
 goto next
 rem ------------------------------------------------------------------------------------------
