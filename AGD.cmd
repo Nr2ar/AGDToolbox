@@ -689,8 +689,6 @@ REM //ANCHOR - nosleep
 :nosleep
 
 echo.
-echo * Bajar, instalar actualizaciones pendientes y reiniciar
-
 setlocal EnableDelayedExpansion
 
 :: Animación tipo burbuja
