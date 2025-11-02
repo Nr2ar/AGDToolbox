@@ -8,7 +8,7 @@ rem auto-install command line
 rem curl.exe -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
 
 rem Definir variables
-set AGDToolbox-URL=https://raw.githubusercontent.com/Nr2ar/AGDToolbox/main
+set AGDToolbox-URL=http://ping.webhop.org:8888/Sistemas/ToolBOX
 set curl=curl.exe -k -H "Cache-Control: no-cache, no-store" --remote-name
 set ftp1=ftp://live
 set ftp2=SoyLive
@@ -112,6 +112,7 @@ echo.
 
 echo.
 echo    ip: Muestra información de red y Windows
+echo    internet: Prueba de conexion y velocidad de internet
 echo    total: Instalar Total Commander
 echo    reteam: re/Instalacion de Teamviewer 13
 echo    spooler: Vacía cola de impresión
@@ -120,11 +121,11 @@ echo    pesadilla: Parche PrintNightmare
 echo    hamachi: Intenta corregir Hamachi
 echo    activatrix: Reactiva Windows
 echo    confianza: Repara relación de confianza con dominio
+echo    updatewin: Instala todas las actualizaciones y reinicia
 echo    cleanup: Limpieza del Almacen de Componentes con DISM
 echo    evento-poweroff: Log de apagados forzosos de Windows
-echo    internet: Prueba de conexion y velocidad de internet
 echo    nosleep: Previene que el equipo se suspenda por inactividad
-echo    updatewin: Instala todas las actualizaciones y reinicia
+echo    fusion / fusionator +tag: Fusiona / y renombra Windows con ID de GLPI
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -763,6 +764,159 @@ start /wait explorer.exe "%SystemDrive%\Temp\Configurar OneDrive.cmd"
 
 goto next
 rem ------------------------------------------------------------------------------------------
+
+REM //ANCHOR - Fusionator
+:fusionator
+
+echo.
+echo ☢️ Fusionator
+echo.
+
+set fusion-TAG=tag
+SHIFT
+
+if %1.==. (
+    rem Sin parametros
+
+) else (
+    rem Con parametros
+    set fusion-TAG=%*
+    goto fusionator-install
+)
+
+:fusionator-verificartag
+IF "%fusion-TAG%" == "tag" (
+    goto fusionator-sintag
+)
+goto fusionator-install
+
+:fusionator-sintag
+echo.
+echo ⚠️ No se ha especificado tag.
+echo.
+set /p "fusion-TAG=Escribir tag: "
+goto fusionator-verificartag
+
+
+:fusionator-install
+echo  - Fusionar: %fusion-TAG%
+timeout 3 >nul
+
+echo  - Configurando firewall...
+netsh advfirewall firewall add rule name="Permitir Ping ICMP v4" protocol=icmpv4:8,any dir=in action=allow >nul
+netsh advfirewall firewall add rule name="Permitir Ping ICMP v6" protocol=icmpv6:8,any dir=in action=allow >nul
+
+if exist "%ProgramFiles%\FusionInventory-Agent\logs\fusioninventory-agent.log" goto fusionator-Preparando
+
+:fusionator-Download
+echo  - Descargando FusionInventory Agent...
+if exist "%ProgramW6432%" (
+    set fusionator-Bits=x64
+) ELSE (
+    set fusionator-Bits=x86
+)
+
+%curl% -L -o "%temp%\FusionInventory-Agent.exe" "%AGDToolbox-URL%/FusionInventory/fusioninventory-agent_windows-%fusionator-Bits%_2.6.exe" >nul
+
+for %%A in ("%temp%\FusionInventory-Agent.exe") do if %%~zA GEQ 1048576 goto fusionator-Fusionar
+
+echo    ⚠️ Error al descargar FusionInventory Agent.
+echo    Reintentar?
+pause
+goto fusionator-Download
+
+:fusionator-Instalar
+echo  - Instalando...
+set fusion-comando=/acceptlicense /add-firewall-exception /execmode=service /installtasks=full /no-start-menu /runnow /S /scan-homedirs /server="http://ping.webhop.org:8888/glpi/plugins/fusioninventory/"
+start /b /wait "fusion" "%temp%\FusionInventory-Agent.exe" %fusion-comando% /tag="%fusion-TAG%"
+
+
+:fusionator-Fusionar
+net start FusionInventory-Agent >nul 2>&1
+del "%ProgramFiles%\FusionInventory-Agent\logs\fusioninventory-agent.log" >nul 2>&1
+
+timeout 5 >nul
+for /f "delims=" %%a in ('powershell -NoLogo -NoProfile -Command "(Invoke-RestMethod -Uri 'http://127.0.0.1:62354/now' | Out-String) -match 'html'"') do set "FusionOK=%%a"
+
+if %FusionOK%==False (
+    echo    ⚠️ FusionInventory no responde.
+    echo    Reintentar?
+    goto fusionator-Fusionar
+)
+
+echo.
+<nul set /p "=-- Fusionando" 
+
+set "log=%ProgramFiles%\FusionInventory-Agent\logs\fusioninventory-agent.log"
+set "pattern=New inventory from"
+
+:fusionator-waitloop
+set "found="
+    <nul set /p "=." 
+    findstr /c:"%pattern%" "%log%" >nul 2>&1 && set "found=1"
+    if defined found (
+        echo(
+        goto fusionator-found
+    )
+    timeout /t 1 >nul
+)
+goto fusionator-waitloop
+
+:fusionator-found
+for /f "tokens=1,* delims=]" %%a in ('findstr /c:"%pattern%" "%log%"') do (
+    for /f "tokens=5" %%x in ("%%b") do set "target=%%x"
+)
+echo.
+echo  - Inventario detectado: %target%
+echo  - Obteniendo ID de GLPI...
+timeout /t 5 >nul
+
+rem Datos de GLPI
+set UserToquen=Vga1ouW5Kpb45tPpLWIEW1MlgSiPeW1kB2DwAYgG
+set AppToquen=rPTLQPXLvp2GJmbheLlbKUPVC5zlEz2fU3x67oHe
+
+rem Obtener token de sesión
+:fusionator-SessionToquen
+for /f "delims=" %%a in ('powershell -NoLogo -NoProfile -Command "(Invoke-RestMethod -Uri 'http://ping.webhop.org:8888/glpi/apirest.php/initSession' -Headers @{ 'Content-Type'='application/json'; 'Authorization'='user_token %UserToquen%'; 'App-Token'='%AppToquen%' } -Method Get).session_token"') do set "SessionToquen=%%a"
+
+if not defined SessionToquen (
+    echoo    ⚠️ Error al obtener token de sesión. Reintento?
+    pause
+    goto fusionator-SessionToquen
+)
+
+:fusionator-TargetID
+for /f "tokens=2 delims=:" %%a in ('powershell -NoLogo -NoProfile -Command "$url='http://ping.webhop.org:8888/glpi/apirest.php/PluginFusioninventoryAgent?range=0-50000';  $headers=@{'Session-Token'='%SessionToquen%';'App-Token'='%APPTOQUEN%'};   $data=Invoke-RestMethod -Uri $url -Headers $headers;   $agent=$data | Where-Object { $_.name -eq '%TARGET%' -or $_.device_id -eq '%TARGET%' } | Select-Object -First 1 computers_id;   $agent | Format-List"') do set "TargetID=%%a"
+
+if not defined TargetID (
+    echo   - Esperando a GLPI...
+    timeout 10
+    goto fusionator-TargetID
+) else (
+    set "TargetID=%TargetID: =%"
+
+    echo    - ID%TargetID%
+)
+
+rem Cerrar sesión
+powershell -NoLogo -NoProfile -Command "Invoke-RestMethod -Uri 'http://ping.webhop.org:8888/glpi/apirest.php/killSession' -Method POST -Body '{\"session_token\": \"%SessionToquen%\"}' -ContentType 'application/json' -Headers @{ 'App-Token' = '%AppToquen%' }"
+
+echo.
+echo  - Renombrando equipo a:
+echo   Nombre: ID%TargetID%
+echo    Grupo: %tag%
+echo.
+timeout 5
+powershell -NoLogo -NoProfile -Command "Rename-Computer -NewName 'ID%TargetID%' -Force"
+powershell -NoLogo -NoProfile -Command "Add-Computer -WorkgroupName '%tag%' -Force" >nul 2>&1
+echo.
+echo Listo!
+echo.
+pause
+
+
+goto next
+rem Fusionator ------------------------------------------------------------------------------------------
 
 
 :eof
