@@ -803,7 +803,7 @@ echo  - Configurando firewall...
 netsh advfirewall firewall add rule name="Permitir Ping ICMP v4" protocol=icmpv4:8,any dir=in action=allow >nul
 netsh advfirewall firewall add rule name="Permitir Ping ICMP v6" protocol=icmpv6:8,any dir=in action=allow >nul
 
-if exist "%ProgramFiles%\FusionInventory-Agent\logs\fusioninventory-agent.log" goto fusionator-Preparando
+if exist "%ProgramFiles%\FusionInventory-Agent\logs\fusioninventory-agent.log" goto fusionator-Fusionar
 
 :fusionator-Download
 echo  - Descargando FusionInventory Agent...
