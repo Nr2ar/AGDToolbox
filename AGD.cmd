@@ -768,16 +768,16 @@ rem ----------------------------------------------------------------------------
 
 REM //ANCHOR - Fusionator
 :fusionator
-
+call :GetAdmin
 set fusion-TAG=tag
-SHIFT
 
-if %1.==. (
+if %2.==. (
     rem Sin parametros
-
 ) else (
     rem Con parametros
-    set fusion-TAG=%*
+    if /i "%~1"=="fusionator" (
+      for /f "tokens=1*" %%A in ("%*") do set "fusion-TAG=%%B"
+    )
     goto fusionator-install
 )
 
@@ -788,7 +788,6 @@ IF "%fusion-TAG%" == "tag" (
 goto fusionator-install
 
 :fusionator-sintag
-echo.
 echo ⚠️ No se ha especificado tag.
 echo.
 set /p "fusion-TAG=Escribir tag: "
@@ -797,6 +796,7 @@ goto fusionator-verificartag
 
 :fusionator-install
 echo  - Fusionar: %fusion-TAG%
+pause
 timeout 3 >nul
 
 echo  - Configurando firewall...
