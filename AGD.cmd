@@ -769,10 +769,6 @@ rem ----------------------------------------------------------------------------
 REM //ANCHOR - Fusionator
 :fusionator
 
-echo.
-echo ☢️ Fusionator
-echo.
-
 set fusion-TAG=tag
 SHIFT
 
@@ -846,7 +842,7 @@ if %FusionOK%==False (
 )
 
 echo.
-<nul set /p "=-- Fusionando" 
+<nul set /p "=-- ☢️ Fusionando" 
 
 set "log=%ProgramFiles%\FusionInventory-Agent\logs\fusioninventory-agent.log"
 set "pattern=New inventory from"

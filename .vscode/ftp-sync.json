@@ -7,7 +7,7 @@
     "secure": false,
     "protocol": "ftp",
     "uploadOnSave": false,
-    "passive": false,
+    "passive": true,
     "debug": false,
     "privateKeyPath": null,
     "passphrase": null,
