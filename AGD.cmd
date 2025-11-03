@@ -8,8 +8,8 @@ rem auto-install command line
 rem curl.exe -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
 
 rem Definir variables
-set AGDToolbox-URL=http://ping.webhop.org:8888/Sistemas/ToolBOX
-set curl=curl.exe -k -H "Cache-Control: no-cache, no-store" --remote-name
+set AGDToolbox-URL=https://ping.webhop.org:8889/Sistemas/ToolBOX
+set curl=curl.exe -k -H "Cache-Control: no-cache, no-store" --insecure --remote-name
 set ftp1=ftp://live
 set ftp2=SoyLive
 set ftp3=ftp.nr2.com
@@ -185,7 +185,7 @@ rem Error si el archivo es demasiado pequeño
     )
 
 del /q "%windir%\speedtest.exe.*"
-curl.exe --fail --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe
+curl.exe --fail --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe1
 
 if not defined AGD-Scheduled (
   if exist "%windir%\AGD-update.cmd" (start "AGD Update" "%windir%\AGD-update.cmd")
@@ -807,7 +807,7 @@ if exist "%ProgramW6432%" (
     set fusionator-Bits=x86
 )
 
-%curl% -L -o "%temp%\FusionInventory-Agent.exe" "%AGDToolbox-URL%/FusionInventory/fusioninventory-agent_windows-%fusionator-Bits%_2.6.exe" >nul
+curl.exe -L -o "%temp%\FusionInventory-Agent.exe" "%AGDToolbox-URL%/FusionInventory/fusioninventory-agent_windows-%fusionator-Bits%_2.6.exe1" >nul
 
 for %%A in ("%temp%\FusionInventory-Agent.exe") do if %%~zA GEQ 1048576 goto fusionator-Fusionar
 
