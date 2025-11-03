@@ -809,7 +809,7 @@ if exist "%ProgramW6432%" (
 
 curl.exe -L -o "%temp%\FusionInventory-Agent.exe" "%AGDToolbox-URL%/FusionInventory/fusioninventory-agent_windows-%fusionator-Bits%_2.6.exe1" >nul
 
-for %%A in ("%temp%\FusionInventory-Agent.exe") do if %%~zA GEQ 1048576 goto fusionator-Fusionar
+for %%A in ("%temp%\FusionInventory-Agent.exe") do if %%~zA GEQ 1048576 goto fusionator-Instalar
 
 echo    ⚠️ Error al descargar FusionInventory Agent.
 echo    Reintentar?
@@ -934,6 +934,7 @@ REM Check admin mode, auto-elevate if required.
 del /s /q "%TEMP%\%~n0.vbs" > NUL 2>&1
 
 REM If here, then process is elevated. Otherwise, batch is already terminated and/or stuck in code above.
+chcp 65001
 
 exit /b
 
