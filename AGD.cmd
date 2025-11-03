@@ -301,8 +301,6 @@ cd "%temp%"
 
 %curl% --ignore-content-length %ftp%/Install/TotalCommanderInstall11.exe
 
-@echo off
-
 "%temp%\TotalCommanderInstall11.exe"
 
 goto next
@@ -576,8 +574,6 @@ echo * DISM Cleanup
 
 call :GetAdmin
 
-setlocal
-
 :: Get the start time using PowerShell
 for /f %%I in ('powershell -command "Get-Date -Format HH:mm:ss"') do set StartTime=%%I
 
@@ -691,7 +687,6 @@ REM //ANCHOR - nosleep
 :nosleep
 
 echo.
-setlocal EnableDelayedExpansion
 
 :: Animación tipo burbuja
 set frame[0]=.  
@@ -796,7 +791,6 @@ goto fusionator-verificartag
 
 :fusionator-install
 echo  - Fusionar: %fusion-TAG%
-pause
 timeout 3 >nul
 
 echo  - Configurando firewall...
@@ -901,11 +895,11 @@ powershell -NoLogo -NoProfile -Command "Invoke-RestMethod -Uri 'http://ping.webh
 echo.
 echo  - Renombrando equipo a:
 echo   Nombre: ID%TargetID%
-echo    Grupo: %tag%
+echo    Grupo: %fusion-TAG%
 echo.
 timeout 5
 powershell -NoLogo -NoProfile -Command "Rename-Computer -NewName 'ID%TargetID%' -Force"
-powershell -NoLogo -NoProfile -Command "Add-Computer -WorkgroupName '%tag%' -Force" >nul 2>&1
+powershell -NoLogo -NoProfile -Command "Add-Computer -WorkgroupName '%fusion-TAG%' -Force" >nul 2>&1
 echo.
 echo Listo!
 echo.
