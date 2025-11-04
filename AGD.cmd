@@ -948,7 +948,7 @@ REM Check admin mode, auto-elevate if required.
 del /s /q "%TEMP%\%~n0.vbs" > NUL 2>&1
 
 REM If here, then process is elevated. Otherwise, batch is already terminated and/or stuck in code above.
-chcp 65001
+chcp 65001 >nul
 
 exit /b
 
