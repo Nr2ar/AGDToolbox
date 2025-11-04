@@ -770,10 +770,7 @@ if %2.==. (
     rem Sin parametros
 ) else (
     rem Con parametros
-    if /i "%~1"=="fusionator" (
-      for /f "tokens=1*" %%A in ("%*") do set "fusion-TAG=%%B"
-    )
-    goto fusionator-install
+    set "fusion-TAG=%2"
 )
 
 :fusionator-verificartag
@@ -811,7 +808,7 @@ curl.exe -L -o "%temp%\FusionInventory-Agent.exe" "%AGDToolbox-URL%/FusionInvent
 
 for %%A in ("%temp%\FusionInventory-Agent.exe") do if %%~zA GEQ 1048576 goto fusionator-Instalar
 
-echo    ⚠️ Error al descargar FusionInventory Agent.
+echo    ! Error al descargar FusionInventory Agent.
 echo    Reintentar?
 pause
 goto fusionator-Download
@@ -827,20 +824,22 @@ net start FusionInventory-Agent >nul 2>&1
 del "%ProgramFiles%\FusionInventory-Agent\logs\fusioninventory-agent.log" >nul 2>&1
 
 timeout 5 >nul
+:fusionator-Fusionar-now
 for /f "delims=" %%a in ('powershell -NoLogo -NoProfile -Command "(Invoke-RestMethod -Uri 'http://127.0.0.1:62354/now' | Out-String) -match 'html'"') do set "FusionOK=%%a"
 
 if %FusionOK%==False (
-    echo    ⚠️ FusionInventory no responde.
+    echo    ! FusionInventory no responde.
     echo    Reintentar?
     goto fusionator-Fusionar
 )
 
 echo.
-<nul set /p "=-- ☢️ Fusionando" 
+<nul set /p "=-- Fusionando" 
 
 set "log=%ProgramFiles%\FusionInventory-Agent\logs\fusioninventory-agent.log"
 set "pattern=New inventory from"
 
+set fusionator-timeout=0
 :fusionator-waitloop
 set "found="
     <nul set /p "=." 
@@ -850,6 +849,12 @@ set "found="
         goto fusionator-found
     )
     timeout /t 1 >nul
+    FOR /F %%g IN ('set /a %fusionator-timeout%+1') do (set fusionator-timeout=%%g)
+    if %fusionator-timeout% GEQ 120 (
+        echo ! Timeout alcanzado. Reintentando...
+        timeout 5 >nul
+        goto fusionator-Fusionar-now
+       )
 )
 goto fusionator-waitloop
 
@@ -871,7 +876,7 @@ rem Obtener token de sesión
 for /f "delims=" %%a in ('powershell -NoLogo -NoProfile -Command "(Invoke-RestMethod -Uri 'http://ping.webhop.org:8888/glpi/apirest.php/initSession' -Headers @{ 'Content-Type'='application/json'; 'Authorization'='user_token %UserToquen%'; 'App-Token'='%AppToquen%' } -Method Get).session_token"') do set "SessionToquen=%%a"
 
 if not defined SessionToquen (
-    echoo    ⚠️ Error al obtener token de sesión. Reintento?
+    echoo    ! Error al obtener token de sesión. Reintento?
     pause
     goto fusionator-SessionToquen
 )
@@ -881,16 +886,22 @@ for /f "tokens=2 delims=:" %%a in ('powershell -NoLogo -NoProfile -Command "$url
 
 if not defined TargetID (
     echo   - Esperando a GLPI...
-    timeout 10
+    timeout 10 >nul
     goto fusionator-TargetID
 ) else (
     set "TargetID=%TargetID: =%"
-
-    echo    - ID%TargetID%
 )
+
+if %TargetID%==0 (
+    goto fusionator-TargetID
+)
+
+echo    - ID%TargetID%
 
 rem Cerrar sesión
 powershell -NoLogo -NoProfile -Command "Invoke-RestMethod -Uri 'http://ping.webhop.org:8888/glpi/apirest.php/killSession' -Method POST -Body '{\"session_token\": \"%SessionToquen%\"}' -ContentType 'application/json' -Headers @{ 'App-Token' = '%AppToquen%' }"
+
+
 
 echo.
 echo  - Renombrando equipo a:
