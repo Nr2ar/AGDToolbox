@@ -346,9 +346,8 @@ rem ----------------------------------------------------------------------------
 REM //ANCHOR - Printers
 :printers
 
-control printers
+explorer.exe shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}
 
-explorer shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}
 
 goto next
 rem ------------------------------------------------------------------------------------------
@@ -776,6 +775,13 @@ if %2.==. (
     set "fusion-TAG=%2"
 )
 
+rem Estoy en post-install de King11?
+for /d %%a in ("%SystemDrive%\King11_23H2\*") do (
+    set "fusion-TAG=%%~nxa"
+    for /d %%b in ("C:\King11_23H2\*") do (rmdir /s /q "%%b" >nul 2>&1)
+    goto fusionator-install
+)
+
 :fusionator-verificartag
 IF "%fusion-TAG%" == "tag" (
     goto fusionator-sintag
@@ -922,6 +928,14 @@ pause
 
 goto next
 rem Fusionator ------------------------------------------------------------------------------------------
+
+REM //ANCHOR - King11-Install
+:King11-Install
+
+rem Operaciones post-instalacion King11
+
+goto next
+rem King11-Install ------------------------------------------------------------------------------------------
 
 
 :eof
