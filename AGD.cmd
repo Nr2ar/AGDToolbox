@@ -773,6 +773,7 @@ if %2.==. (
 ) else (
     rem Con parametros
     set "fusion-TAG=%2"
+    SHIFT
 )
 
 rem Estoy en post-install de King11?
@@ -797,6 +798,11 @@ goto fusionator-verificartag
 
 :fusionator-install
 echo  - Fusionar: %fusion-TAG%
+
+rem Guardar TAG en post-install si existe para HDSentinel
+if exist "%SystemDrive%\Post-Install\post-install.cmd" (
+    echo %fusion-TAG%>"%SystemDrive%\Post-Install\fusion-tag.txt"
+)
 timeout 3 >nul
 
 echo  - Configurando firewall...
