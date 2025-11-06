@@ -926,6 +926,7 @@ echo.
 
 if exist "%SystemDrive%\Post-Install\donde-AGD.txt" (
   start /b /wait "Sentinela" "%SystemDrive%\Post-Install\HDSentinel.cmd"
+  pause
   exit
 )
 
