@@ -769,12 +769,6 @@ REM //ANCHOR - Fusionator
 call :GetAdmin
 set fusion-TAG=tag
 
-rem Estoy en post-install de King11?
-for /d %%a in ("%SystemDrive%\King11_23H2\*") do (
-    set "fusion-TAG=%%~nxa"
-    goto fusionator-verificartag
-)
-
 if %2.==. (
     rem Sin parametros
 ) else (
@@ -911,12 +905,12 @@ if %TargetID%==0 (
     goto fusionator-TargetID
 )
 
-echo    - ID%TargetID%
-
 rem Cerrar sesión
 powershell -NoLogo -NoProfile -Command "Invoke-RestMethod -Uri 'http://ping.webhop.org:8888/glpi/apirest.php/killSession' -Method POST -Body '{\"session_token\": \"%SessionToquen%\"}' -ContentType 'application/json' -Headers @{ 'App-Token' = '%AppToquen%' }"
 
-
+echo    - ID%TargetID%
+rem Guardar TargetID en post-install para HDSentinel
+echo %TargetID%>"%SystemDrive%\Post-Install\fusion-TargetID.txt"
 
 echo.
 echo  - Renombrando equipo a:
@@ -929,6 +923,11 @@ powershell -NoLogo -NoProfile -Command "Add-Computer -WorkgroupName '%fusion-TAG
 echo.
 echo Listo!
 echo.
+
+if exist "%SystemDrive%\Post-Install\donde-AGD.txt" (
+  start /b /wait "%SystemDrive%\Post-Install\HDSentinel.cmd"
+)
+
 pause
 
 
@@ -937,11 +936,21 @@ rem Fusionator -----------------------------------------------------------------
 
 REM //ANCHOR - King11-Install
 :King11-Install
-
-SHIFT
 rem Operaciones post-instalacion King11
 
-goto next
+SHIFT
+
+echo SI>"%SystemDrive%\Post-Install\King11-install.txt"
+
+set fusion-TAG=tag
+
+rem Estoy en post-install de King11
+for /d %%a in ("%SystemDrive%\King11_23H2\*") do (
+    set "fusion-TAG=%%~nxa"
+    goto fusionator-verificartag
+)
+
+exit
 rem King11-Install ------------------------------------------------------------------------------------------
 
 
