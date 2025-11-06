@@ -765,8 +765,15 @@ rem ----------------------------------------------------------------------------
 
 REM //ANCHOR - Fusionator
 :fusionator
+
 call :GetAdmin
 set fusion-TAG=tag
+
+rem Estoy en post-install de King11?
+for /d %%a in ("%SystemDrive%\King11_23H2\*") do (
+    set "fusion-TAG=%%~nxa"
+    goto fusionator-verificartag
+)
 
 if %2.==. (
     rem Sin parametros
@@ -774,13 +781,6 @@ if %2.==. (
     rem Con parametros
     set "fusion-TAG=%2"
     SHIFT
-)
-
-rem Estoy en post-install de King11?
-for /d %%a in ("%SystemDrive%\King11_23H2\*") do (
-    set "fusion-TAG=%%~nxa"
-    for /d %%b in ("C:\King11_23H2\*") do (rmdir /s /q "%%b" >nul 2>&1)
-    goto fusionator-install
 )
 
 :fusionator-verificartag
@@ -938,6 +938,7 @@ rem Fusionator -----------------------------------------------------------------
 REM //ANCHOR - King11-Install
 :King11-Install
 
+SHIFT
 rem Operaciones post-instalacion King11
 
 goto next
