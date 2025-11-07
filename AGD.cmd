@@ -784,7 +784,7 @@ IF "%fusion-TAG%" == "tag" (
 goto fusionator-install
 
 :fusionator-sintag
-echo ⚠️ No se ha especificado tag.
+echo  * No se ha especificado tag.
 echo.
 set /p "fusion-TAG=Escribir tag: "
 goto fusionator-verificartag
