@@ -4,9 +4,6 @@ chcp 65001
 mode con: cols=120 lines=50
 setlocal enableextensions enabledelayedexpansion
 
-rem auto-install command line
-rem curl.exe -k -H "Cache-Control: no-cache, no-store" -Lo AGD-Toolbox.cmd http://tool.agdseguridad.com.ar && AGD-Toolbox.cmd
-
 rem Definir variables
 set AGDToolbox-URL=https://ping.webhop.org:8889/Sistemas/ToolBOX
 set curl=curl.exe -k -H "Cache-Control: no-cache, no-store" --insecure --remote-name
@@ -88,6 +85,8 @@ IF "%~1"=="onedrive" goto %~1
 IF "%~1"=="nosleep" goto %~1
 IF "%~1"=="updatewin" goto %~1
 IF "%~1"=="fusionator" goto %~1
+IF "%~1"=="King11-Install" goto %~1
+IF "%~1"=="King11-Install-Fusionator" goto %~1
 
 
 :next
@@ -126,7 +125,7 @@ echo    updatewin: Instala todas las actualizaciones y reinicia
 echo    cleanup: Limpieza del Almacen de Componentes con DISM
 echo    evento-poweroff: Log de apagados forzosos de Windows
 echo    nosleep: Previene que el equipo se suspenda por inactividad
-echo    fusion / fusionator +tag: Fusiona / y renombra Windows con ID de GLPI
+echo    fusionator tag: Fusiona y renombra Windows con ID de GLPI
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -140,8 +139,6 @@ rem ----------------------------------------------------------------------------
 REM //ANCHOR - Update
 :update
 echo * Forzar actualización
-
-call :getadmin
 
 goto install-update
 
@@ -161,7 +158,7 @@ for /f "tokens=1 delims= " %%a in ('time.exe /t') do set current_time=%%a
 
 echo  - Creando tareas programadas...
 
-schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time:~0,-1%0 /tn "AGD\AGDToolbox_update" /tr "curl.exe -k -Lo "%windir%\AGD.cmd" http://tool.agdseguridad.com.ar" /it /F
+schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time:~0,-1%0 /tn "AGD\AGDToolbox_update" /tr "curl.exe -k -L -Lo "%windir%\AGD.cmd" http://tool.agdseguridad.com.ar" /it /F
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time:~0,-1%1 /tn "AGD\AGDToolbox" /tr "'%windir%\AGD.cmd' sched" /it /F
 
 echo  - Descargando actualizacion...
@@ -176,7 +173,7 @@ rem Verificar si el archivo fue descargado correctamente
     )
 
 rem Error si el archivo es demasiado pequeño
-    for %%A in ("%windir%\AGD-update.cmd") do if %%~zA lss 10000 (
+    for %%A in ("%windir%\AGD-update.cmd") do if %%~zA lss 20000 (
         echo     - Error al descargar - archivo vacío
         timeout 5
         del "%windir%\AGD-update.cmd"
@@ -184,8 +181,9 @@ rem Error si el archivo es demasiado pequeño
         exit
     )
 
+echo on
 del /q "%windir%\speedtest.exe.*"
-curl.exe --fail --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe1
+curl.exe --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe1
 
 if not defined AGD-Scheduled (
   if exist "%windir%\AGD-update.cmd" (start "AGD Update" "%windir%\AGD-update.cmd")
@@ -938,7 +936,17 @@ rem Fusionator -----------------------------------------------------------------
 
 REM //ANCHOR - King11-Install
 :King11-Install
-rem Operaciones post-instalacion King11
+rem Operaciones  durante instalacion King11
+
+rem - Nada por ahora -
+
+exit /b
+
+rem King11-Install ------------------------------------------------------------------------------------------
+
+
+:King11-Install-Fusionator
+rem Auto Fusionator durante post-install King11
 
 SHIFT
 
@@ -954,6 +962,7 @@ for /d %%a in ("%SystemDrive%\King11_23H2\*") do (
 
 exit
 rem King11-Install ------------------------------------------------------------------------------------------
+
 
 
 :eof
