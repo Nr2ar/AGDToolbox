@@ -940,7 +940,7 @@ rem Operaciones  durante instalacion King11
 
 rem - Nada por ahora -
 
-exit /b
+exit
 
 rem King11-Install ------------------------------------------------------------------------------------------
 
