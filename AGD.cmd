@@ -936,9 +936,10 @@ rem Fusionator -----------------------------------------------------------------
 
 REM //ANCHOR - King11-Install
 :King11-Install
-rem Operaciones  durante instalacion King11
+rem Operaciones durante instalacion King11
 
 rem - Nada por ahora -
+rem Reservado para futuros hot-patches online
 
 exit
 
@@ -952,13 +953,26 @@ SHIFT
 
 echo SI>"%SystemDrive%\Post-Install\King11-install.txt"
 
-set fusion-TAG=tag
+rem buscar dir.tag para auto-fusionator
+for /f "tokens=1 delims=." %%a IN ('dir /a /b %systemdrive%\*.tag') DO set tag=%%a
 
-rem Estoy en post-install de King11
-for /d %%a in ("%SystemDrive%\King11_23H2\*") do (
-    set "fusion-TAG=%%~nxa"
-    goto fusionator-verificartag
+if %tag% == no (
+
+echo.
+echo  *Encontrado tag de NO fusionar
+echo   Establecer nombre de PC a mano
+
+start %systemdrive%\Post-Install\postInstall10-NombrePC.exe
+
+exit 
+
 )
+
+if not defined tag (
+  set fusion-TAG=tag
+)
+
+goto fusionator-verificartag
 
 exit
 rem King11-Install ------------------------------------------------------------------------------------------
