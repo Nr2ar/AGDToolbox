@@ -765,6 +765,21 @@ REM //ANCHOR - Fusionator
 :fusionator
 
 call :GetAdmin
+
+rem Comprobar si hay carpetas compartidas y alertar al usuario
+rem Ejecuta PowerShell y guarda resultado (1 = tiene compartidos, 0 = no)
+powershell -NoLogo -NoProfile -Command ^
+"$hasShares = (Get-SmbShare ^| Where-Object { $_.Name -notin 'C$','ADMIN$','IPC$','print$' }).Count -gt 0; " "$hasPrinters = (Get-Printer ^| Where-Object { $_.Shared -eq $true }).Count -gt 0; " "if ($hasShares -or $hasPrinters) { exit 1 } else { exit 0 }"
+
+if %errorlevel%==1 (
+    echo.
+    echo  * ATENCION *
+    echo    Fusionator renombrará el equipo y hay carpetas o impresoras compartidas.
+    echo    Enter para continuar o cerrar la ventana para cancelar.
+    echo.
+    pause
+)
+
 set fusion-TAG=tag
 
 if %2.==. (
