@@ -806,13 +806,22 @@ goto fusionator-verificartag
 :fusionator-install
 echo  - Fusionar: %fusion-TAG%
 
-rem Guardar TAG en post-install si existe para HDSentinel
-if exist "%SystemDrive%\Post-Install\post-install.cmd" (
+rem Guardar TAG para HDSentinel si estoy en Post-Install
+if defined King11-Install (
     echo %fusion-TAG%>"%SystemDrive%\Post-Install\fusion-tag.txt"
 )
 timeout 3 >nul
 
-echo  - Configurando firewall...
+
+rem TODO:
+rem FUSIONATOR si estoy en la muni o en AGD
+
+
+
+
+
+
+rem echo  - Configurando firewall...
 netsh advfirewall firewall add rule name="Permitir Ping ICMP v4" protocol=icmpv4:8,any dir=in action=allow >nul
 netsh advfirewall firewall add rule name="Permitir Ping ICMP v6" protocol=icmpv6:8,any dir=in action=allow >nul
 
@@ -965,7 +974,7 @@ rem King11-Install -------------------------------------------------------------
 rem Auto Fusionator durante post-install King11
 
 SHIFT
-
+set King11-Install=SI
 echo SI>"%SystemDrive%\Post-Install\King11-install.txt"
 
 rem buscar dir.tag para auto-fusionator
@@ -976,11 +985,10 @@ if %fusion-TAG% == no (
 echo.
 echo  * Encontrado tag de NO fusionar
 echo    Establecer nombre de PC a mano
-
+echo.
 start %systemdrive%\Post-Install\postInstall10-NombrePC.exe
 
-timeout 10
-
+pause
 exit 
 
 )
