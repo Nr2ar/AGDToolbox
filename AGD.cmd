@@ -937,7 +937,7 @@ echo.
 echo Listo!
 echo.
 
-if exist "%SystemDrive%\Post-Install\donde-AGD.txt" (
+if exist "%SystemDrive%\Post-Install\donde.agd" (
   start /b /wait "Sentinela" "%SystemDrive%\Post-Install\HDSentinel.cmd"
   pause
   exit
