@@ -954,21 +954,23 @@ SHIFT
 echo SI>"%SystemDrive%\Post-Install\King11-install.txt"
 
 rem buscar dir.tag para auto-fusionator
-for /f "tokens=1 delims=." %%a IN ('dir /a /b %systemdrive%\*.tag') DO set tag=%%a
+for /f "tokens=1 delims=." %%a IN ('dir /a /b %systemdrive%\*.tag') DO set fusion-TAG=%%a
 
-if %tag% == no (
+if %fusion-TAG% == no (
 
 echo.
-echo  *Encontrado tag de NO fusionar
-echo   Establecer nombre de PC a mano
+echo  * Encontrado tag de NO fusionar
+echo    Establecer nombre de PC a mano
 
 start %systemdrive%\Post-Install\postInstall10-NombrePC.exe
+
+timeout 10
 
 exit 
 
 )
 
-if not defined tag (
+if not defined fusion-TAG (
   set fusion-TAG=tag
 )
 
