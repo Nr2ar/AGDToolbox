@@ -277,7 +277,7 @@ for /f "delims=" %%A in ('powershell.exe -noprofile -Command ^
     echo %%A
 )
 
-if %Interfaces_Deshabilitadas%==0 echo  - Todas las interfaces habilitadas
+if "%Interfaces_Deshabilitadas%" == "0" echo  - Todas las interfaces habilitadas
 
 echo.
 
@@ -812,15 +812,6 @@ if defined King11-Install (
 )
 timeout 3 >nul
 
-
-rem TODO:
-rem FUSIONATOR si estoy en la muni o en AGD
-
-
-
-
-
-
 rem echo  - Configurando firewall...
 netsh advfirewall firewall add rule name="Permitir Ping ICMP v4" protocol=icmpv4:8,any dir=in action=allow >nul
 netsh advfirewall firewall add rule name="Permitir Ping ICMP v6" protocol=icmpv6:8,any dir=in action=allow >nul
@@ -845,8 +836,21 @@ pause
 goto fusionator-Download
 
 :fusionator-Instalar
+
+rem Estoy en la MUNI o AGD?
+ping -w 1000 10.10.7.99 >nul
+if "%errorlevel%" == "0" (
+  set GLPI_Server=http://10.10.7.11
+  set Donde_Estoy=MUNI
+  echo - En MUNI 🧉
+) else (
+  set GLPI_Server=http://ping.webhop.org:8888/glpi
+  set Donde_Estoy=AGD
+  echo - En AGD 👔
+)
+
 echo  - Instalando...
-set fusion-comando=/acceptlicense /add-firewall-exception /execmode=service /installtasks=full /no-start-menu /runnow /S /scan-homedirs /server="http://ping.webhop.org:8888/glpi/plugins/fusioninventory/"
+set fusion-comando=/acceptlicense /add-firewall-exception /execmode=service /installtasks=full /no-start-menu /runnow /S /scan-homedirs /server="%GLPI_Server%/plugins/fusioninventory/"
 start /b /wait "fusion" "%temp%\FusionInventory-Agent.exe" %fusion-comando% /tag="%fusion-TAG%"
 
 
@@ -858,7 +862,7 @@ timeout 5 >nul
 :fusionator-Fusionar-now
 for /f "delims=" %%a in ('powershell -NoLogo -NoProfile -Command "(Invoke-RestMethod -Uri 'http://127.0.0.1:62354/now' | Out-String) -match 'html'"') do set "FusionOK=%%a"
 
-if %FusionOK%==False (
+if "%FusionOK%" == "False" (
     echo    ! FusionInventory no responde.
     echo    Reintentar?
     goto fusionator-Fusionar
@@ -899,12 +903,16 @@ echo  - Obteniendo ID de GLPI...
 timeout /t 5 >nul
 
 rem Datos de GLPI
-set UserToquen=Vga1ouW5Kpb45tPpLWIEW1MlgSiPeW1kB2DwAYgG
-set AppToquen=rPTLQPXLvp2GJmbheLlbKUPVC5zlEz2fU3x67oHe
-
+if "%Donde_Estoy%" == "MUNI" (
+  set UserToquen=Vga1ouW5Kpb45tPpLWIEW1MlgSiPeW1kB2DwAYgG
+  set AppToquen=rPTLQPXLvp2GJmbheLlbKUPVC5zlEz2fU3x67oHe
+) else (
+  set UserToquen=Vga1ouW5Kpb45tPpLWIEW1MlgSiPeW1kB2DwAYgG
+  set AppToquen=rPTLQPXLvp2GJmbheLlbKUPVC5zlEz2fU3x67oHe
+)
 rem Obtener token de sesión
 :fusionator-SessionToquen
-for /f "delims=" %%a in ('powershell -NoLogo -NoProfile -Command "(Invoke-RestMethod -Uri 'http://ping.webhop.org:8888/glpi/apirest.php/initSession' -Headers @{ 'Content-Type'='application/json'; 'Authorization'='user_token %UserToquen%'; 'App-Token'='%AppToquen%' } -Method Get).session_token"') do set "SessionToquen=%%a"
+for /f "delims=" %%a in ('powershell -NoLogo -NoProfile -Command "(Invoke-RestMethod -Uri '%GLPI_Server%/apirest.php/initSession' -Headers @{ 'Content-Type'='application/json'; 'Authorization'='user_token %UserToquen%'; 'App-Token'='%AppToquen%' } -Method Get).session_token"') do set "SessionToquen=%%a"
 
 if not defined SessionToquen (
     echoo    ! Error al obtener token de sesión. Reintento?
@@ -913,7 +921,7 @@ if not defined SessionToquen (
 )
 
 :fusionator-TargetID
-for /f "tokens=2 delims=:" %%a in ('powershell -NoLogo -NoProfile -Command "$url='http://ping.webhop.org:8888/glpi/apirest.php/PluginFusioninventoryAgent?range=0-50000';  $headers=@{'Session-Token'='%SessionToquen%';'App-Token'='%APPTOQUEN%'};   $data=Invoke-RestMethod -Uri $url -Headers $headers;   $agent=$data | Where-Object { $_.name -eq '%TARGET%' -or $_.device_id -eq '%TARGET%' } | Select-Object -First 1 computers_id;   $agent | Format-List"') do set "TargetID=%%a"
+for /f "tokens=2 delims=:" %%a in ('powershell -NoLogo -NoProfile -Command "$url='%GLPI_Server%/apirest.php/PluginFusioninventoryAgent?range=0-50000';  $headers=@{'Session-Token'='%SessionToquen%';'App-Token'='%APPTOQUEN%'};   $data=Invoke-RestMethod -Uri $url -Headers $headers;   $agent=$data | Where-Object { $_.name -eq '%TARGET%' -or $_.device_id -eq '%TARGET%' } | Select-Object -First 1 computers_id;   $agent | Format-List"') do set "TargetID=%%a"
 
 if not defined TargetID (
     echo   - Esperando a GLPI...
@@ -923,12 +931,12 @@ if not defined TargetID (
     set "TargetID=%TargetID: =%"
 )
 
-if %TargetID%==0 (
+if "%TargetID%" == "0" (
     goto fusionator-TargetID
 )
 
 rem Cerrar sesión
-powershell -NoLogo -NoProfile -Command "Invoke-RestMethod -Uri 'http://ping.webhop.org:8888/glpi/apirest.php/killSession' -Method POST -Body '{\"session_token\": \"%SessionToquen%\"}' -ContentType 'application/json' -Headers @{ 'App-Token' = '%AppToquen%' }"
+powershell -NoLogo -NoProfile -Command "Invoke-RestMethod -Uri '%GLPI_Server%/apirest.php/killSession' -Method POST -Body '{\"session_token\": \"%SessionToquen%\"}' -ContentType 'application/json' -Headers @{ 'App-Token' = '%AppToquen%' }"
 
 echo    - ID%TargetID%
 rem Guardar TargetID en post-install para HDSentinel
@@ -980,18 +988,18 @@ echo SI>"%SystemDrive%\Post-Install\King11-install.txt"
 rem buscar dir.tag para auto-fusionator
 for /f "tokens=1 delims=." %%a IN ('dir /a /b %systemdrive%\*.tag') DO set fusion-TAG=%%a
 
-if %fusion-TAG% == no (
-
-echo.
-echo  * Encontrado tag de NO fusionar
-echo    Establecer nombre de PC a mano
-echo.
-start %systemdrive%\Post-Install\postInstall10-NombrePC.exe
-
-pause
-exit 
-
-)
+if defined fusion-TAG (
+  if "%fusion-TAG%" == "no" (
+    echo.
+    echo  * Encontrado tag de NO fusionar
+    echo    Establecer nombre de PC a mano
+    echo.
+    
+    start %systemdrive%\Post-Install\postInstall10-NombrePC.exe
+    pause
+    exit 
+    )
+  )
 
 if not defined fusion-TAG (
   set fusion-TAG=tag
