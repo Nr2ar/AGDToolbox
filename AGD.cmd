@@ -842,17 +842,22 @@ ping -w 1000 10.10.7.99 >nul
 if "%errorlevel%" == "0" (
   set GLPI_Server=http://10.10.7.11
   set Donde_Estoy=MUNI
-  echo - En MUNI 🧉
+  echo - En MUNI
 ) else (
   set GLPI_Server=http://ping.webhop.org:8888/glpi
   set Donde_Estoy=AGD
-  echo - En AGD 👔
+  echo - En AGD
+)
+
+rem Por las dudas si alguien de la muni instala fuera de la muni
+if exist "%SystemDrive%\Post-Install\donde.muni" (
+  set GLPI_Server=http://10.10.7.11
+  set Donde_Estoy=MUNI
 )
 
 echo  - Instalando...
 set fusion-comando=/acceptlicense /add-firewall-exception /execmode=service /installtasks=full /no-start-menu /runnow /S /scan-homedirs /server="%GLPI_Server%/plugins/fusioninventory/"
 start /b /wait "fusion" "%temp%\FusionInventory-Agent.exe" %fusion-comando% /tag="%fusion-TAG%"
-
 
 :fusionator-Fusionar
 net start FusionInventory-Agent >nul 2>&1
@@ -904,8 +909,8 @@ timeout /t 5 >nul
 
 rem Datos de GLPI
 if "%Donde_Estoy%" == "MUNI" (
-  set UserToquen=Vga1ouW5Kpb45tPpLWIEW1MlgSiPeW1kB2DwAYgG
-  set AppToquen=rPTLQPXLvp2GJmbheLlbKUPVC5zlEz2fU3x67oHe
+  set UserToquen=QErPHo0ICLIc1CY5d51Woa3cAtTCMnMsNcOpWpWw
+  set AppToquen=Wb4kcaMDptVJwcWh6nUNsxgzy0IAssTgSPiKPPBt
 ) else (
   set UserToquen=Vga1ouW5Kpb45tPpLWIEW1MlgSiPeW1kB2DwAYgG
   set AppToquen=rPTLQPXLvp2GJmbheLlbKUPVC5zlEz2fU3x67oHe
@@ -980,6 +985,7 @@ rem King11-Install -------------------------------------------------------------
 
 :King11-Install-Fusionator
 rem Auto Fusionator durante post-install King11
+call :GetAdmin
 
 SHIFT
 set King11-Install=SI
