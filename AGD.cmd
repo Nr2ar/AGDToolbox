@@ -812,6 +812,24 @@ if defined King11-Install (
 )
 timeout 3 >nul
 
+rem Estoy en la MUNI o AGD?
+ping -w 1000 10.10.7.99 >nul
+if "%errorlevel%" == "0" (
+  set GLPI_Server=http://10.10.7.11
+  set Donde_Estoy=MUNI
+  echo - En MUNI
+) else (
+  set GLPI_Server=http://ping.webhop.org:8888/glpi
+  set Donde_Estoy=AGD
+  echo - En AGD
+)
+
+rem Por las dudas si alguien de la muni instala fuera de la muni
+if exist "%SystemDrive%\Post-Install\donde.muni" (
+  set GLPI_Server=http://10.10.7.11
+  set Donde_Estoy=MUNI
+)
+
 rem echo  - Configurando firewall...
 netsh advfirewall firewall add rule name="Permitir Ping ICMP v4" protocol=icmpv4:8,any dir=in action=allow >nul
 netsh advfirewall firewall add rule name="Permitir Ping ICMP v6" protocol=icmpv6:8,any dir=in action=allow >nul
@@ -836,24 +854,6 @@ pause
 goto fusionator-Download
 
 :fusionator-Instalar
-
-rem Estoy en la MUNI o AGD?
-ping -w 1000 10.10.7.99 >nul
-if "%errorlevel%" == "0" (
-  set GLPI_Server=http://10.10.7.11
-  set Donde_Estoy=MUNI
-  echo - En MUNI
-) else (
-  set GLPI_Server=http://ping.webhop.org:8888/glpi
-  set Donde_Estoy=AGD
-  echo - En AGD
-)
-
-rem Por las dudas si alguien de la muni instala fuera de la muni
-if exist "%SystemDrive%\Post-Install\donde.muni" (
-  set GLPI_Server=http://10.10.7.11
-  set Donde_Estoy=MUNI
-)
 
 echo  - Instalando...
 set fusion-comando=/acceptlicense /add-firewall-exception /execmode=service /installtasks=full /no-start-menu /runnow /S /scan-homedirs /server="%GLPI_Server%/plugins/fusioninventory/"
@@ -909,9 +909,11 @@ timeout /t 5 >nul
 
 rem Datos de GLPI
 if "%Donde_Estoy%" == "MUNI" (
+  rem MUNI
   set UserToquen=QErPHo0ICLIc1CY5d51Woa3cAtTCMnMsNcOpWpWw
   set AppToquen=Wb4kcaMDptVJwcWh6nUNsxgzy0IAssTgSPiKPPBt
 ) else (
+  rem AGD
   set UserToquen=Vga1ouW5Kpb45tPpLWIEW1MlgSiPeW1kB2DwAYgG
   set AppToquen=rPTLQPXLvp2GJmbheLlbKUPVC5zlEz2fU3x67oHe
 )
@@ -920,7 +922,7 @@ rem Obtener token de sesión
 for /f "delims=" %%a in ('powershell -NoLogo -NoProfile -Command "(Invoke-RestMethod -Uri '%GLPI_Server%/apirest.php/initSession' -Headers @{ 'Content-Type'='application/json'; 'Authorization'='user_token %UserToquen%'; 'App-Token'='%AppToquen%' } -Method Get).session_token"') do set "SessionToquen=%%a"
 
 if not defined SessionToquen (
-    echoo    ! Error al obtener token de sesión. Reintento?
+    echo    ! Error al obtener token de sesión. Reintento?
     pause
     goto fusionator-SessionToquen
 )
