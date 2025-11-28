@@ -212,14 +212,9 @@ rem ----------------------------------------------------------------------------
 
 REM //ANCHOR - IP
 :ip
-rem for /f %%a in ('wmic computersystem get domain ^| findstr /r /v "^$"') do (set ip_workgroup_domain=%%a)
 
-for /f "skip=1 delims=" %%a in ('wmic computersystem get domain') do (
-    set "line=%%a"
-    if not defined secondLine (
-        set ip_workgroup_domain=!line!
-        set "secondLine=true"
-    )
+for /f "usebackq delims=" %%a in (`powershell -NoLogo -NoProfile -Command "(Get-CimInstance Win32_ComputerSystem).Domain"`) do (
+    set "ip_workgroup_domain=%%a"
 )
 
 (
@@ -231,7 +226,7 @@ for /f "tokens=2*" %%a in ('reg query "HKEY_LOCAL_MACHINE\SOFTWARE\FusionInvento
     set "fusioninventory_tag=%%b"
 )
 
-echo  Host: %ip_workgroup_domain%- %whoami%
+echo  Host: %ip_workgroup_domain% - %whoami%
 if defined TeamID (echo  Teamviewer: %TeamID%)
 if defined fusioninventory_tag (echo  Fusion: %fusioninventory_tag%)
 echo.
@@ -412,6 +407,11 @@ echo * Activatrix
 
 call :getadmin
 
+echo  * Desactivar Antivirus antes de continuar *
+echo.
+
+start windowsdefender://threatsettings/
+
 cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "icen"
 cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "Noti"
 cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "Error"
@@ -419,7 +419,13 @@ cscript //nologo "%systemroot%\system32\slmgr.vbs" /dli 2>nul | find "Error"
 %temp:~0,2%
 cd "%temp%"
 
-%curl% https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/refs/heads/master/MAS/All-In-One-Version-KL/MAS_AIO.cmd
+pause
+
+rem Antes
+rem %curl% https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/refs/heads/master/MAS/All-In-One-Version-KL/MAS_AIO.cmd
+
+rem Ahora
+curl.exe -k --insecure -o "%temp%\MAS_AIO.cmd" --doh-url https://1.1.1.1/dns-query https://get.activated.win/
 
 start /b "MAS_AIO" "%temp%\MAS_AIO.cmd"
 
