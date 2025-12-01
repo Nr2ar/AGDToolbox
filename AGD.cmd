@@ -425,7 +425,8 @@ rem Antes
 rem %curl% https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/refs/heads/master/MAS/All-In-One-Version-KL/MAS_AIO.cmd
 
 rem Ahora
-curl.exe -k --insecure -o "%temp%\MAS_AIO.cmd" --doh-url https://1.1.1.1/dns-query https://get.activated.win/
+powershell.exe -noprofile -Command "iex (curl.exe -s --doh-url https://1.1.1.1/dns-query https://get.activated.win | Out-String)"
+
 
 start /b "MAS_AIO" "%temp%\MAS_AIO.cmd"
 
