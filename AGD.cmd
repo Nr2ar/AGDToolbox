@@ -87,6 +87,7 @@ IF "%~1"=="updatewin" goto %~1
 IF "%~1"=="fusionator" goto %~1
 IF "%~1"=="King11-Install" goto %~1
 IF "%~1"=="King11-Install-Fusionator" goto %~1
+IF "%~1"=="King11-Apps" goto %~1
 
 
 :next
@@ -989,9 +990,7 @@ rem Reservado para futuros hot-patches online
 
 exit
 
-rem King11-Install ------------------------------------------------------------------------------------------
-
-
+rem ------------------------------------------------------------------------------------------
 :King11-Install-Fusionator
 rem Auto Fusionator durante post-install King11
 call :GetAdmin
@@ -1023,8 +1022,21 @@ if not defined fusion-TAG (
 goto fusionator-verificartag
 
 exit
-rem King11-Install ------------------------------------------------------------------------------------------
+rem FIN ------------------------------------------------------------------------------------------
 
+
+rem ------------------------------------------------------------------------------------------
+REM //ANCHOR - King11-Apps
+:King-Apps
+rem Instalar apps de tienda tras primer boot
+
+echo.
+echo  * Instalando Whatsapp...
+winget install --id 9NKSQGP7F2NH --source msstore --accept-source-agreements --accept-package-agreements --silent
+
+exit
+
+rem FIN ------------------------------------------------------------------------------------------
 
 
 :eof
