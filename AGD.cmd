@@ -1046,7 +1046,7 @@ rem ----------------------------------------------------------------------------
 REM //ANCHOR - anydesk
 :anydesk
 
-call getadmin
+call :getadmin
 
 echo.
 echo  * Instalando Anydesk...
@@ -1058,11 +1058,9 @@ if exist "%ProgramW6432%" (
 
 :anydesk-config
 if exist %anydesk_exe% (
-  echo remoto666 ^| %anydesk_exe% --set-password
-  %anydesk_exe%
+  start "anydesk" echo remoto666 | %anydesk_exe% --set-password
   exit
 )
-
 
 %temp:~0,2%
 cd "%temp%"
@@ -1071,7 +1069,7 @@ cd "%temp%"
 
 start /wait "anydesk" "%temp%\AnyDesk.exe" --silent
 
-goto anydesk-config
+goto :anydesk-config
 exit
 
 rem FIN ------------------------------------------------------------------------------------------
