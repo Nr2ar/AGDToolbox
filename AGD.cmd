@@ -88,6 +88,7 @@ IF "%~1"=="fusionator" goto %~1
 IF "%~1"=="King11-Install" goto %~1
 IF "%~1"=="King11-Install-Fusionator" goto %~1
 IF "%~1"=="King11-Apps" goto %~1
+IF "%~1"=="anydesk" goto %~1
 
 
 :next
@@ -127,6 +128,7 @@ echo    cleanup: Limpieza del Almacen de Componentes con DISM
 echo    evento-poweroff: Log de apagados forzosos de Windows
 echo    nosleep: Previene que el equipo se suspenda por inactividad
 echo    fusionator tag: Fusiona y renombra Windows con ID de GLPI
+echo    anydesk: Instala AnyDesk
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -1033,6 +1035,44 @@ rem Instalar apps de tienda tras primer boot
 echo.
 echo  * Instalando Whatsapp...
 winget install --id 9NKSQGP7F2NH --source msstore --accept-source-agreements --accept-package-agreements --silent
+
+exit
+
+rem FIN ------------------------------------------------------------------------------------------
+
+
+
+rem ------------------------------------------------------------------------------------------
+REM //ANCHOR - anydesk
+:anydesk
+
+call getadmin
+
+echo.
+echo  * Instalando Anydesk...
+if exist "%ProgramW6432%" (
+    set anydesk_exe="%ProgramFiles(x86)%\AnyDesk\AnyDesk.exe"
+) ELSE (
+    set anydesk_exe="%ProgramFiles%\AnyDesk\AnyDesk.exe"
+)
+
+:anydesk-config
+if exist %anydesk_exe% (
+  echo remoto666 ^| %anydesk_exe% --set-password
+  %anydesk_exe%
+  exit
+)
+
+
+%temp:~0,2%
+cd "%temp%"
+
+%curl% https://download.anydesk.com/AnyDesk.exe
+
+start /wait "anydesk" "%temp%\AnyDesk.exe" --silent
+
+goto anydesk-config
+
 
 exit
 
