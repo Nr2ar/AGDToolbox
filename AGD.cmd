@@ -1072,8 +1072,6 @@ cd "%temp%"
 start /wait "anydesk" "%temp%\AnyDesk.exe" --silent
 
 goto anydesk-config
-
-
 exit
 
 rem FIN ------------------------------------------------------------------------------------------
