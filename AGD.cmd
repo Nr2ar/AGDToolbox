@@ -89,6 +89,7 @@ IF "%~1"=="King11-Install" goto %~1
 IF "%~1"=="King11-Install-Fusionator" goto %~1
 IF "%~1"=="King11-Apps" goto %~1
 IF "%~1"=="anydesk" goto %~1
+IF "%~1"=="red-privada" goto %~1
 
 
 :next
@@ -129,6 +130,7 @@ echo    evento-poweroff: Log de apagados forzosos de Windows
 echo    nosleep: Previene que el equipo se suspenda por inactividad
 echo    fusionator tag: Fusiona y renombra Windows con ID de GLPI
 echo    anydesk: Instala AnyDesk
+echo    red-privada: Establece todas las redes conectadas como privadas
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -159,11 +161,17 @@ call :getadmin
 
 for /f "tokens=1 delims= " %%a in ('time.exe /t') do set current_time=%%a
 
+echo.
 echo  - Creando tareas programadas...
-
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time:~0,-1%0 /tn "AGD\AGDToolbox_update" /tr "curl.exe -k -L -Lo "%windir%\AGD.cmd" http://tool.agdseguridad.com.ar" /it /F
 schtasks /create /ru SYSTEM /sc DAILY /mo 1 /st %current_time:~0,-1%1 /tn "AGD\AGDToolbox" /tr "'%windir%\AGD.cmd' sched" /it /F
 
+echo.
+echo  - Aplicando parches...
+rem Parche anti-molestia al abrir .rdp Windows 11
+reg add "HKLM\Software\Policies\Microsoft\Windows NT\Terminal Services\Client" /v RedirectionWarningDialogVersion /t REG_DWORD /d 1 /f
+
+echo.c
 echo  - Descargando actualizacion...
 curl.exe --fail --insecure -H "Cache-Control: no-cache, no-store" -L -o "%windir%\AGD-update.cmd" http://tool.agdseguridad.com.ar
 
@@ -185,8 +193,25 @@ rem Error si el archivo es demasiado pequeño
     )
 
 echo on
-del /q "%windir%\speedtest.exe.*"
-curl.exe --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe1
+
+if exist "%windir%\speedtest.exe" (
+  for /f "tokens=2 delims=: " %%a in ('curl -sI https://ping.webhop.org:8889/Sistemas/ToolBOX/speedtest.exe1 ^| findstr /I "Content-Length"') do set speedtest-remoto=%%a
+  for %%A in ("%windir%\speedtest.exe") do set speedtest-local=%%~zA
+
+  if "%speedtest-remoto%"=="%speedtest-local%" (
+    rem Mismo tamano
+    set speedtest-descargar=no
+    ) else (
+    rem Distinto tamano
+    set speedtest-descargar=si
+    )
+)
+
+if "%speedtest-descargar%"=="si" (
+  del /q "%windir%\speedtest.exe.*"
+  curl.exe --insecure -o "%windir%\speedtest.exe" %AGDToolbox-URL%/speedtest.exe1
+)
+
 
 if not defined AGD-Scheduled (
   if exist "%windir%\AGD-update.cmd" (start "AGD Update" "%windir%\AGD-update.cmd")
@@ -986,8 +1011,6 @@ rem Fusionator -----------------------------------------------------------------
 REM //ANCHOR - King11-Install
 :King11-Install
 rem Operaciones durante instalacion King11
-
-rem - Nada por ahora -
 rem Reservado para futuros hot-patches online
 
 exit
@@ -1058,7 +1081,7 @@ if exist "%ProgramW6432%" (
 
 :anydesk-config
 if exist %anydesk_exe% (
-  start "anydesk" echo remoto666 | %anydesk_exe% --set-password
+  start "anydesk" echo remoto666 ^| %anydesk_exe% --set-password
   exit
 )
 
@@ -1070,6 +1093,23 @@ cd "%temp%"
 start /wait "anydesk" "%temp%\AnyDesk.exe" --silent
 
 goto :anydesk-config
+exit
+
+rem FIN ------------------------------------------------------------------------------------------
+
+
+
+rem ------------------------------------------------------------------------------------------
+REM //ANCHOR - red-privada
+:red-privada
+
+call :getadmin
+
+echo.
+echo  * Configurando todas las redes conectadas como privadas...
+
+powershell.exe -NonInteractive -Command "Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private"
+
 exit
 
 rem FIN ------------------------------------------------------------------------------------------
