@@ -816,7 +816,6 @@ if %usbnet% GTR 0 (
     pause
 )
 
-
 rem Comprobar si hay carpetas compartidas y alertar al usuario
 rem Ejecuta PowerShell y guarda resultado (1 = tiene compartidos, 0 = no)
 powershell -NoLogo -NoProfile -Command ^
@@ -1072,8 +1071,21 @@ REM //ANCHOR - King11-Apps
 rem Instalar apps de tienda tras primer boot
 
 echo.
+echo  * Actualizando tienda...
+WINGET SETTINGS --ENABLE BypassCertificatePinningForMicrosoftStore
+WINGET UPGRADE Microsoft.AppInstaller --accept-source-agreements --accept-package-agreements --silent
+WINGET SETTINGS --DISABLE BypassCertificatePinningForMicrosoftStore
+
+echo.
+echo  * Actualizando apps...
+WINGET UPGRADE --all --include-unknown --accept-source-agreements --accept-package-agreements
+
+echo.
 echo  * Instalando Whatsapp...
 winget install --id 9NKSQGP7F2NH --source msstore --accept-source-agreements --accept-package-agreements --silent
+
+echo  * Instalando Putty...
+winget install --id xpfnzksklbp7rj --source msstore --accept-source-agreements --accept-package-agreements --silent
 
 exit
 
