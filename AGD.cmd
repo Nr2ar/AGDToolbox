@@ -801,6 +801,22 @@ REM //ANCHOR - Fusionator
 
 call :GetAdmin
 
+
+rem Comprobar si hay adaptadores de red USB y advertir para evitar errores de fusion
+for /f %%A in ('powershell -NoProfile -Command "@(Get-PnpDevice -Class Net | Where-Object { $_.InstanceId -like \"USB*\" -and $_.Status -eq \"OK\" }).Count"') do set USBNET=%%A
+
+if %usbnet% GTR 0 (
+    echo.
+    echo  * ATENCION *
+    echo    Se han detectado adaptadores de red USB conectados.
+    echo    Para evitar errores en la fusion, desconectarlos antes de continuar.
+    echo    Algunas Notebooks tienen adaptadores de red USB integrados.  
+    echo    Enter para continuar o cerrar la ventana para cancelar.
+    echo.
+    pause
+)
+
+
 rem Comprobar si hay carpetas compartidas y alertar al usuario
 rem Ejecuta PowerShell y guarda resultado (1 = tiene compartidos, 0 = no)
 powershell -NoLogo -NoProfile -Command ^
