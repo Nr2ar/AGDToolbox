@@ -839,7 +839,8 @@ goto fusionator-verificartag
 
 
 :fusionator-install
-rem Comprobar si hay adaptadores de red USB y advertir para evitar errores de fusion
+echo.
+echo   * Comprobando adaptadores de red USB...
 for /f %%A in ('powershell -NoProfile -Command "@(Get-PnpDevice -Class Net | Where-Object { $_.InstanceId -like \"USB*\" -and $_.Status -eq \"OK\" }).Count"') do set USBNET=%%A
 
 if %usbnet% GTR 0 (
@@ -853,6 +854,7 @@ if %usbnet% GTR 0 (
     pause
 )
 
+echo.
 echo  - Fusionar: %fusion-TAG%
 
 rem Guardar TAG para HDSentinel si estoy en Post-Install
@@ -1086,6 +1088,7 @@ winget install --id 9NKSQGP7F2NH --source msstore --accept-source-agreements --a
 echo  * Instalando Putty...
 winget install --id xpfnzksklbp7rj --source msstore --accept-source-agreements --accept-package-agreements --silent
 
+del "%userprofile%\Desktop\VirusTotal*.lnk" >nul 2>&1
 
 exit
 
