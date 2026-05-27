@@ -90,6 +90,8 @@ IF "%~1"=="King11-Install-Fusionator" goto %~1
 IF "%~1"=="King11-Apps" goto %~1
 IF "%~1"=="anydesk" goto %~1
 IF "%~1"=="red-privada" goto %~1
+IF "%~1"=="boot" goto %~1
+IF "%~1"=="boot-bios" goto %~1
 
 
 :next
@@ -131,6 +133,7 @@ echo    nosleep: Previene que el equipo se suspenda por inactividad
 echo    fusionator tag: Fusiona y renombra Windows con ID de GLPI
 echo    anydesk: Instala AnyDesk
 echo    red-privada: Establece todas las redes conectadas como privadas
+echo    boot / boot-bios: Reinicia en el menu de booteo / BIOS
 echo.
 echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
@@ -1140,6 +1143,37 @@ echo.
 echo  * Configurando todas las redes conectadas como privadas...
 
 powershell.exe -NonInteractive -Command "Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private"
+
+exit
+
+rem FIN ------------------------------------------------------------------------------------------
+
+
+rem ------------------------------------------------------------------------------------------
+REM //ANCHOR - boot
+:boot
+
+echo.
+echo  * Reiniciando al menú de inicio...
+timeout 5
+shutdown /r /o /t 2
+
+exit
+
+rem FIN ------------------------------------------------------------------------------------------
+
+
+
+rem ------------------------------------------------------------------------------------------
+REM //ANCHOR - boot-bios
+:boot-bios
+
+call :getadmin
+
+echo.
+echo  * Reiniciando al BIOS UEFI...
+timeout 5
+shutdown /r /fw /t 2
 
 exit
 
