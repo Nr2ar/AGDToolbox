@@ -801,21 +801,6 @@ REM //ANCHOR - Fusionator
 
 call :GetAdmin
 
-
-rem Comprobar si hay adaptadores de red USB y advertir para evitar errores de fusion
-for /f %%A in ('powershell -NoProfile -Command "@(Get-PnpDevice -Class Net | Where-Object { $_.InstanceId -like \"USB*\" -and $_.Status -eq \"OK\" }).Count"') do set USBNET=%%A
-
-if %usbnet% GTR 0 (
-    echo.
-    echo  * ATENCION *
-    echo    Se han detectado adaptadores de red USB conectados.
-    echo    Para evitar errores en la fusion, desconectarlos antes de continuar.
-    echo    Algunas Notebooks tienen adaptadores de red USB integrados.  
-    echo    Enter para continuar o cerrar la ventana para cancelar.
-    echo.
-    pause
-)
-
 rem Comprobar si hay carpetas compartidas y alertar al usuario
 rem Ejecuta PowerShell y guarda resultado (1 = tiene compartidos, 0 = no)
 powershell -NoLogo -NoProfile -Command ^
@@ -854,6 +839,20 @@ goto fusionator-verificartag
 
 
 :fusionator-install
+rem Comprobar si hay adaptadores de red USB y advertir para evitar errores de fusion
+for /f %%A in ('powershell -NoProfile -Command "@(Get-PnpDevice -Class Net | Where-Object { $_.InstanceId -like \"USB*\" -and $_.Status -eq \"OK\" }).Count"') do set USBNET=%%A
+
+if %usbnet% GTR 0 (
+    echo.
+    echo  * ATENCION *
+    echo    Se han detectado adaptadores de red USB conectados.
+    echo    Para evitar errores en la fusion, desconectarlos antes de continuar.
+    echo    Algunas Notebooks tienen adaptadores de red USB integrados.  
+    echo    Enter para continuar o cerrar la ventana para cancelar.
+    echo.
+    pause
+)
+
 echo  - Fusionar: %fusion-TAG%
 
 rem Guardar TAG para HDSentinel si estoy en Post-Install
@@ -1086,6 +1085,7 @@ winget install --id 9NKSQGP7F2NH --source msstore --accept-source-agreements --a
 
 echo  * Instalando Putty...
 winget install --id xpfnzksklbp7rj --source msstore --accept-source-agreements --accept-package-agreements --silent
+
 
 exit
 
