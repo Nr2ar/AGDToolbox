@@ -1092,6 +1092,7 @@ echo  * Instalando Putty...
 winget install --id xpfnzksklbp7rj --source msstore --accept-source-agreements --accept-package-agreements --silent
 
 del "%userprofile%\Desktop\VirusTotal*.lnk" >nul 2>&1
+del "%userprofile%\AGD-Toolbox.cmd" >nul 2>&1
 
 exit
 
