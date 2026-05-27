@@ -76,6 +76,7 @@ IF "%~1"=="printers" goto %~1
 IF "%~1"=="pesadilla" goto %~1
 IF "%~1"=="hamachi" goto %~1
 IF "%~1"=="activatrix" goto %~1
+IF "%~1"=="activatrix-auto" goto %~1
 IF "%~1"=="truesoftland" goto %~1
 IF "%~1"=="confianza" goto %~1
 IF "%~1"=="cleanup" goto %~1
@@ -124,7 +125,7 @@ echo    spooler: Vacía cola de impresión
 echo    printers: Abre impresoras en Windows 11
 echo    pesadilla: Parche PrintNightmare
 echo    hamachi: Intenta corregir Hamachi
-echo    activatrix: Reactiva Windows
+echo    activatrix / activatrix-auto: Reactiva Windows / Windows y Office automáticamente
 echo    confianza: Repara relación de confianza con dominio
 echo    updatewin: Instala todas las actualizaciones y reinicia
 echo    cleanup: Limpieza del Almacen de Componentes con DISM
@@ -139,6 +140,7 @@ echo    install: Instala AGD Toolbox
 echo    update: Fuerza una actualización
 echo    help: Esta ayuda
 echo.
+pause
 
 goto next
 rem ------------------------------------------------------------------------------------------
@@ -549,6 +551,27 @@ powershell.exe -NonInteractive -Command "irm %AGDToolbox-URL%/get.activated.win.
 goto next
 rem ------------------------------------------------------------------------------------------
 
+REM //ANCHOR - Activatrix-auto
+:activatrix-auto
+
+echo.
+echo * Activatrix Automático
+
+call :getadmin
+
+echo  * Desactivar Antivirus antes de continuar *
+echo.
+
+start windowsdefender://threatsettings/
+
+%temp:~0,2%
+cd "%temp%"
+
+pause
+
+start /b /wait "Activar" powershell -NoProfile -NoLogo -Command "& ([ScriptBlock]::Create((curl.exe -s --doh-url https://1.1.1.1/dns-query https://get.activated.win | Out-String))) /HWID /Ohook"
+
+goto next
 
 REM //ANCHOR - trueSoftland
 :trueSoftland
