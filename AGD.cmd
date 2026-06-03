@@ -89,6 +89,8 @@ IF "%~1"=="fusionator" goto %~1
 IF "%~1"=="King11-Install" goto %~1
 IF "%~1"=="King11-Install-Fusionator" goto %~1
 IF "%~1"=="King11-Apps" goto %~1
+IF "%~1"=="King11-Driverpack" goto %~1
+IF "%~1"=="King11-postDriverpack" goto %~1
 IF "%~1"=="anydesk" goto %~1
 IF "%~1"=="red-privada" goto %~1
 IF "%~1"=="boot" goto %~1
@@ -867,6 +869,7 @@ goto fusionator-verificartag
 :fusionator-install
 echo.
 echo   * Comprobando adaptadores de red USB...
+set usbnet=nada
 for /f %%A in ('powershell -NoProfile -Command "@(Get-PnpDevice -Class Net | Where-Object { $_.InstanceId -like \"USB*\" -and $_.Status -eq \"OK\" }).Count"') do set USBNET=%%A
 
 if %usbnet% GTR 0 (
@@ -1066,8 +1069,10 @@ SHIFT
 set King11-Install=SI
 echo SI>"%SystemDrive%\Post-Install\King11-install.txt"
 
+color 9F
+
 rem buscar dir.tag para auto-fusionator
-for /f "tokens=1 delims=." %%a IN ('dir /a /b %systemdrive%\*.tag') DO set fusion-TAG=%%a
+for /f "tokens=1 delims=." %%a IN ('dir /a /b %systemdrive%\*.tag') DO set fusion-TAG=%%a >nul 2>&1
 
 if defined fusion-TAG (
   if "%fusion-TAG%" == "no" (
@@ -1105,17 +1110,116 @@ WINGET SETTINGS --DISABLE BypassCertificatePinningForMicrosoftStore
 
 echo.
 echo  * Actualizando apps...
-WINGET UPGRADE --all --include-unknown --accept-source-agreements --accept-package-agreements
+WINGET UPGRADE --all --include-unknown --accept-source-agreements --accept-package-agreements --silent
 
 echo.
 echo  * Instalando Whatsapp...
-winget install --id 9NKSQGP7F2NH --source msstore --accept-source-agreements --accept-package-agreements --silent
+winget install --id 9NKSQGP7F2NH --source msstore --accept-source-agreements --accept-package-agreements --silent >nul
 
 echo  * Instalando Putty...
-winget install --id xpfnzksklbp7rj --source msstore --accept-source-agreements --accept-package-agreements --silent
+winget install --id xpfnzksklbp7rj --source msstore --accept-source-agreements --accept-package-agreements --silent >nul
 
 del "%userprofile%\Desktop\VirusTotal*.lnk" >nul 2>&1
 del "%userprofile%\AGD-Toolbox.cmd" >nul 2>&1
+
+echo  * Activando Windows y Office...
+start /min /wait "Activar" powershell -NoProfile -NoLogo -Command "& ([ScriptBlock]::Create((curl.exe -s --doh-url https://1.1.1.1/dns-query https://get.activated.win | Out-String))) /HWID /Ohook"
+
+goto King11-Driverpack
+
+rem FIN ------------------------------------------------------------------------------------------
+
+rem ------------------------------------------------------------------------------------------
+REM //ANCHOR - King11-Driverpack
+:King11-Driverpack
+rem Auto instalar Driverpack
+
+echo.
+echo  * Auto-instalar Driverpack...
+
+echo.
+
+set DriverPackPath=NO
+
+if exist "%SystemDrive%\Post-Install\donde.agd" (
+  set DriverPackPath=\\192.168.2.10\DriverPack
+)
+
+if exist "%SystemDrive%\Post-Install\donde.muni" (
+  set DriverPackPath=\\10.10.7.99\cdr\PENDRIVE11\PORTABLES+\DriverPack FULL
+)
+
+if "%DriverPackPath%"=="NO" (
+    echo  ! No se encontro DriverPack.
+    echo    Instalar manualmente.
+    echo FIN
+    pause
+    exit
+)
+
+netsh advfirewall firewall add rule name="Snappy Driver Installer" dir=in action=allow program="%DriverPackPath%\SDI_x64_R2601.exe" enable=yes profile=any
+netsh advfirewall firewall add rule name="Snappy Driver Installer" dir=out action=allow program="%DriverPackPath%\SDI_x64_R2601.exe" enable=yes profile=any
+
+start /b /wait "Snappy Driver Installer" /d"%DriverPackPath%" "%DriverPackPath%\SDI_x64_R2601.exe" -autoinstall -autoclose >nul 2>&1
+
+echo  * Buscando drivers faltantes...
+set MissingDrivers=no
+for /f %%A in ('powershell -NoProfile -ExecutionPolicy Bypass -Command "@(Get-CimInstance Win32_PnPEntity | Where-Object {$_.ConfigManagerErrorCode -eq 28}).Count"') do set MissingDrivers=%%A
+
+if %MissingDrivers% EQU no echo MissingDrivers=no
+
+if %MissingDrivers% GTR 0 (
+    echo   - Se encontraron %MissingDrivers% dispositivos sin driver.
+    echo     Verificar Driverpack manualmente...
+    start /b /wait "Snappy Driver Installer" /d"%DriverPackPath%" "%DriverPackPath%\SDI_x64_R2601.exe" >nul 2>&1
+) else (
+    echo   - Todos los drivers estan instalados.
+)
+
+rmdir /s /q "%temp%\DriverPack" >nul
+
+goto King11-postDriverpack
+
+REM //ANCHOR - King11-postDriverpack
+:King11-postDriverpack
+rem Pruebas post-Driverpack
+
+echo.
+echo  * Probar hardware...
+
+echo.
+powershell -NoProfile -Nologo "$cam = Get-PnpDevice -Class Camera -Status OK 2>$null; if ($cam) { exit 0 } else { exit 1 }"
+
+if %errorlevel%==0 (
+    echo   OK - Webcam detectada
+    echo        - Probar Microfono
+    explorer.exe microsoft.windows.camera:
+) else (
+    echo   X - Webcam NO detectada
+)
+
+netsh wlan show networks > "%temp%\wifi.txt" 2>nul
+findstr /i "SSID" "%temp%\wifi.txt" >nul
+if %errorlevel%==0 (
+    echo   OK - WiFi detectado
+) else (
+    echo  X - Wifi NO detectado
+)
+echo.
+echo   - Reproduciendo sonido de prueba
+
+echo.
+echo FIN
+echo Se puede cerrar esta ventana
+
+start "Checklist" "%ProgramFiles%\Google\Chrome\Application\chrome.exe" --incognito https://docs.google.com/document/d/e/2PACX-1vTsDf7Pv5w6YIPsk2_Sqm-1zRcxhQUBOCHNsbKsHea76Qk6eIJpB7lAD_6qv7Tv0sqbGW6ufUzQfeVY/pub
+
+:King11-postDriverpack-audiotest
+powershell -NoProfile -Command "(New-Object Media.SoundPlayer '%windir%\Media\Ring10.wav').PlaySync()"
+rem Mantener el sistema despierto usando SetThreadExecutionState
+powershell -command "Add-Type '[DllImport(\"kernel32.dll\")] public static extern bool SetThreadExecutionState(uint esFlags);' -Name NativeMethods -Namespace Power; [Power.NativeMethods]::SetThreadExecutionState(0x80000003)" >nul
+timeout 30 >nul
+goto :King11-postDriverpack-audiotest
 
 exit
 
