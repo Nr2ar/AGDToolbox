@@ -199,7 +199,6 @@ rem Error si el archivo es demasiado pequeño
         exit
     )
 
-echo on
 
 if exist "%windir%\speedtest.exe" (
   for /f "tokens=2 delims=: " %%a in ('curl -sI https://ping.webhop.org:8889/Sistemas/ToolBOX/speedtest.exe1 ^| findstr /I "Content-Length"') do set speedtest-remoto=%%a
@@ -857,12 +856,18 @@ if %2.==. (
 IF "%fusion-TAG%" == "tag" (
     goto fusionator-sintag
 )
+
 goto fusionator-install
 
 :fusionator-sintag
+cls
+echo AGD Toolbox - v%fileSize%
+echo -------------------- %*
+echo.
+
 echo  * No se ha especificado tag.
 echo.
-set /p "fusion-TAG=Escribir tag: "
+set /p fusion-TAG=Escribir tag: 
 goto fusionator-verificartag
 
 
@@ -897,11 +902,11 @@ ping -w 1000 10.10.7.99 >nul
 if "%errorlevel%" == "0" (
   set GLPI_Server=http://10.10.7.11
   set Donde_Estoy=MUNI
-  echo - En MUNI
+  echo  - En MUNI
 ) else (
   set GLPI_Server=http://ping.webhop.org:8888/glpi
   set Donde_Estoy=AGD
-  echo - En AGD
+  echo  - En AGD
 )
 
 rem Por las dudas si alguien de la muni instala fuera de la muni
@@ -1025,18 +1030,22 @@ if "%TargetID%" == "0" (
 rem Cerrar sesión
 powershell -NoLogo -NoProfile -Command "Invoke-RestMethod -Uri '%GLPI_Server%/apirest.php/killSession' -Method POST -Body '{\"session_token\": \"%SessionToquen%\"}' -ContentType 'application/json' -Headers @{ 'App-Token' = '%AppToquen%' }"
 
-echo    - ID%TargetID%
 rem Guardar TargetID en post-install para HDSentinel
 echo %TargetID%>"%SystemDrive%\Post-Install\fusion-TargetID.txt"
 
-echo.
 echo  - Renombrando equipo a:
 echo   Nombre: ID%TargetID%
 echo    Grupo: %fusion-TAG%
+timeout 5 >nul
+powershell -NoLogo -NoProfile -Command "Rename-Computer -NewName 'ID%TargetID%' -Force" >nul
+powershell -NoLogo -NoProfile -Command "Add-Computer -WorkgroupName '%fusion-TAG%' -Force" >nul
+
+rem Lo siguiente es para que se actulice el nombre en GLPI sin esperar al reinicio
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v Hostname /t REG_SZ /d ID%TargetID% /f >nul
+
 echo.
-timeout 5
-powershell -NoLogo -NoProfile -Command "Rename-Computer -NewName 'ID%TargetID%' -Force"
-powershell -NoLogo -NoProfile -Command "Add-Computer -WorkgroupName '%fusion-TAG%' -Force" >nul 2>&1
+echo  - Actualizando nuevo nombre en GLPI...
+start /min /wait "Refusionando" cmd /c echo REFUSIONANDO && "%PROGRAMFILES%\FusionInventory-Agent\fusioninventory-agent.bat"
 echo.
 echo Listo!
 echo.
@@ -1046,8 +1055,6 @@ if exist "%SystemDrive%\Post-Install\donde.agd" (
   pause
   exit
 )
-
-pause
 
 
 goto next
@@ -1063,16 +1070,17 @@ exit
 rem ------------------------------------------------------------------------------------------
 :King11-Install-Fusionator
 rem Auto Fusionator durante post-install King11
-call :GetAdmin
 
 SHIFT
 set King11-Install=SI
-echo SI>"%SystemDrive%\Post-Install\King11-install.txt"
+echo SI>"%SystemDrive%\Post-Install\King11-install.txt" >nul
 
 color 9F
 
 rem buscar dir.tag para auto-fusionator
-for /f "tokens=1 delims=." %%a IN ('dir /a /b %systemdrive%\*.tag') DO set fusion-TAG=%%a >nul 2>&1
+if exist "%systemdrive%\*.tag" (
+  for /f "tokens=1 delims=." %%a IN ('dir /ad /b %systemdrive%\*.tag 2^>nul') DO set fusion-TAG=%%a
+)
 
 if defined fusion-TAG (
   if "%fusion-TAG%" == "no" (
@@ -1081,15 +1089,12 @@ if defined fusion-TAG (
     echo    Establecer nombre de PC a mano
     echo.
     
-    start %systemdrive%\Post-Install\postInstall10-NombrePC.exe
-    pause
+    start /wait %systemdrive%\Post-Install\postInstall10-NombrePC.exe
     exit 
     )
   )
 
-if not defined fusion-TAG (
-  set fusion-TAG=tag
-)
+if not defined fusion-TAG (set fusion-TAG=tag) >nul
 
 goto fusionator-verificartag
 
@@ -1157,10 +1162,12 @@ if "%DriverPackPath%"=="NO" (
     exit
 )
 
-netsh advfirewall firewall add rule name="Snappy Driver Installer" dir=in action=allow program="%DriverPackPath%\SDI_x64_R2601.exe" enable=yes profile=any
-netsh advfirewall firewall add rule name="Snappy Driver Installer" dir=out action=allow program="%DriverPackPath%\SDI_x64_R2601.exe" enable=yes profile=any
+netsh advfirewall firewall add rule name="Snappy Driver Installer" dir=in action=allow program="%DriverPackPath%\SDI_x64_R2601.exe" enable=yes profile=any>nul
+netsh advfirewall firewall add rule name="Snappy Driver Installer" dir=out action=allow program="%DriverPackPath%\SDI_x64_R2601.exe" enable=yes profile=any>nul
 
-start /b /wait "Snappy Driver Installer" /d"%DriverPackPath%" "%DriverPackPath%\SDI_x64_R2601.exe" -autoinstall -autoclose >nul 2>&1
+if exist "%SystemDrive%\Post-Install\donde.agd" (
+  start /b /wait "Snappy Driver Installer" /d"%DriverPackPath%" "%DriverPackPath%\SDI_x64_R2601.exe" -autoinstall -autoclose >nul 2>&1
+)
 
 echo  * Buscando drivers faltantes...
 set MissingDrivers=no
@@ -1175,8 +1182,6 @@ if %MissingDrivers% GTR 0 (
 ) else (
     echo   - Todos los drivers estan instalados.
 )
-
-rmdir /s /q "%temp%\DriverPack" >nul
 
 goto King11-postDriverpack
 
@@ -1203,16 +1208,27 @@ findstr /i "SSID" "%temp%\wifi.txt" >nul
 if %errorlevel%==0 (
     echo   OK - WiFi detectado
 ) else (
-    echo  X - Wifi NO detectado
+    echo   X - Wifi NO detectado
 )
 echo.
 echo   - Reproduciendo sonido de prueba
 
-echo.
-echo FIN
-echo Se puede cerrar esta ventana
+if exist "%SystemDrive%\Post-Install\donde.agd" (
+  set ChecklistURL=https://docs.google.com/document/d/e/2PACX-1vTsDf7Pv5w6YIPsk2_Sqm-1zRcxhQUBOCHNsbKsHea76Qk6eIJpB7lAD_6qv7Tv0sqbGW6ufUzQfeVY/pub
+)
 
-start "Checklist" "%ProgramFiles%\Google\Chrome\Application\chrome.exe" --incognito https://docs.google.com/document/d/e/2PACX-1vTsDf7Pv5w6YIPsk2_Sqm-1zRcxhQUBOCHNsbKsHea76Qk6eIJpB7lAD_6qv7Tv0sqbGW6ufUzQfeVY/pub
+if exist "%SystemDrive%\Post-Install\donde.muni" (
+  set ChecklistURL=https://docs.google.com/document/d/e/2PACX-1vSUgfBYK9bwdrH0EjLGNEE6C-tK7DCzhUECb4ECSTlwRHNT8xy26VVdLEvGduzhKBHqa6sfgzsFX3eJ/pub
+)
+
+if defined ChecklistURL (
+  echo   - Abriendo checklist...
+  start "Checklist" "%ProgramFiles%\Google\Chrome\Application\chrome.exe" --incognito %ChecklistURL%
+)
+
+echo.
+echo FIN - Se puede cerrar esta ventana
+
 
 :King11-postDriverpack-audiotest
 powershell -NoProfile -Command "(New-Object Media.SoundPlayer '%windir%\Media\Ring10.wav').PlaySync()"
