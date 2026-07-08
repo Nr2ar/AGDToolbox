@@ -81,6 +81,7 @@ IF "%~1"=="truesoftland" goto %~1
 IF "%~1"=="confianza" goto %~1
 IF "%~1"=="cleanup" goto %~1
 IF "%~1"=="evento-poweroff" goto %~1
+IF "%~1"=="evento-memtest" goto %~1
 IF "%~1"=="internet" goto %~1
 IF "%~1"=="onedrive" goto %~1
 IF "%~1"=="nosleep" goto %~1
@@ -700,6 +701,26 @@ goto next
 rem ------------------------------------------------------------------------------------------
 
 
+REM //ANCHOR - evento-memtest
+:evento-memtest
+
+echo.
+echo * Evento: Memtest
+
+call :GetAdmin
+
+powershell -NoProfile -Command "Get-WinEvent -FilterHashtable @{LogName='System';ProviderName='Microsoft-Windows-MemoryDiagnostics-Results'} -MaxEvents 1 | Select-Object TimeCreated,Message"
+powershell -NoProfile -Command "Get-WinEvent -FilterHashtable @{LogName='System';ProviderName='Microsoft-Windows-MemoryDiagnostics-Results'} -MaxEvents 1 | Select-Object TimeCreated,Message" | clip
+
+echo.
+echo  (informacion copiada al portapapeles)
+pause
+
+goto next
+rem ------------------------------------------------------------------------------------------
+
+
+
 REM //ANCHOR - internet
 :internet
 
@@ -1045,7 +1066,7 @@ reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v Hostname /t
 
 echo.
 echo  - Actualizando nuevo nombre en GLPI...
-start /min /wait "Refusionando" cmd /c echo REFUSIONANDO && "%PROGRAMFILES%\FusionInventory-Agent\fusioninventory-agent.bat"
+call "%PROGRAMFILES%\FusionInventory-Agent\fusioninventory-agent.bat"
 echo.
 echo Listo!
 echo.
@@ -1107,6 +1128,15 @@ REM //ANCHOR - King11-Apps
 :King11-Apps
 rem Instalar apps de tienda tras primer boot
 
+if exist "%SystemDrive%\Post-Install\donde.muni" (
+  echo.
+  echo  * Conectando a Rafam...
+  net use \\10.10.1.8 /user:rafam rafam /persistent:yes >nul
+  cmdkey /add:10.10.1.8 /user:rafam /pass:rafam >nul
+)
+
+del "%SystemDrive%\Post-Install\muni.pass" >nul 2>&1
+
 echo.
 echo  * Actualizando tienda...
 WINGET SETTINGS --ENABLE BypassCertificatePinningForMicrosoftStore
@@ -1119,16 +1149,22 @@ WINGET UPGRADE --all --include-unknown --accept-source-agreements --accept-packa
 
 echo.
 echo  * Instalando Whatsapp...
-winget install --id 9NKSQGP7F2NH --source msstore --accept-source-agreements --accept-package-agreements --silent >nul
+winget install --id 9NKSQGP7F2NH --source msstore --accept-source-agreements --accept-package-agreements --silent
 
+echo.
 echo  * Instalando Putty...
-winget install --id xpfnzksklbp7rj --source msstore --accept-source-agreements --accept-package-agreements --silent >nul
+winget install --id xpfnzksklbp7rj --source msstore --accept-source-agreements --accept-package-agreements --silent
 
+echo.
+echo  * Retoques...
 del "%userprofile%\Desktop\VirusTotal*.lnk" >nul 2>&1
 del "%userprofile%\AGD-Toolbox.cmd" >nul 2>&1
+reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v Phantom_Sl /f >nul
 
 echo  * Activando Windows y Office...
 start /min /wait "Activar" powershell -NoProfile -NoLogo -Command "& ([ScriptBlock]::Create((curl.exe -s --doh-url https://1.1.1.1/dns-query https://get.activated.win | Out-String))) /HWID /Ohook"
+
+
 
 goto King11-Driverpack
 
