@@ -1058,10 +1058,26 @@ echo  - Renombrando equipo a:
 echo   Nombre: ID%TargetID%
 echo    Grupo: %fusion-TAG%
 timeout 5 >nul
-powershell -NoLogo -NoProfile -Command "Rename-Computer -NewName 'ID%TargetID%' -Force" >nul
-powershell -NoLogo -NoProfile -Command "Add-Computer -WorkgroupName '%fusion-TAG%' -Force" >nul
 
-rem Lo siguiente es para que se actulice el nombre en GLPI sin esperar al reinicio
+rem Comprobar si estoy en dominio o grupo de trabajo
+for /f %%A in ('powershell -NoLogo -NoProfile -Command "(Get-CimInstance Win32_ComputerSystem).PartOfDomain"') do set fusionator-DOMAIN=%%A
+
+:Fusionator-Rename
+if /I "%fusionator-DOMAIN%"=="True" (
+  echo.
+  echo  - Ingresar credenciales de administrador de dominio
+  powershell -NoLogo -NoProfile -ExecutionPolicy Bypass "$cred = Get-Credential -Message 'Ingrese una cuenta con permisos para renombrar el equipo en el dominio'; Rename-Computer -NewName 'ID%TargetID%' -DomainCredential $cred -Force"
+  if errorlevel 1 (
+    echo   - Error. Reintentar
+    goto Fusionator-Rename
+    )
+)
+) else (
+  powershell -NoLogo -NoProfile -Command "Rename-Computer -NewName 'ID%TargetID%' -Force" >nul
+  powershell -NoLogo -NoProfile -Command "Add-Computer -WorkgroupName '%fusion-TAG%' -Force" >nul
+)
+
+rem Lo siguiente es para que se actualice el nombre en GLPI sin esperar al reinicio
 reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v Hostname /t REG_SZ /d ID%TargetID% /f >nul
 
 echo.
@@ -1154,6 +1170,11 @@ winget install --id 9NKSQGP7F2NH --source msstore --accept-source-agreements --a
 echo.
 echo  * Instalando Putty...
 winget install --id xpfnzksklbp7rj --source msstore --accept-source-agreements --accept-package-agreements --silent
+
+echo.
+echo  * Instalando DotNet...
+winget install -e --id Microsoft.DotNet.DesktopRuntime.9
+winget install -e --id Microsoft.DotNet.DesktopRuntime.10
 
 echo.
 echo  * Retoques...
@@ -1306,7 +1327,6 @@ cd "%temp%"
 
 start /wait "anydesk" "%temp%\AnyDesk.exe" --silent
 
-goto :anydesk-config
 exit
 
 rem FIN ------------------------------------------------------------------------------------------
