@@ -123,7 +123,7 @@ echo.
 echo    ip: Muestra información de red y Windows
 echo    internet: Prueba de conexion y velocidad de internet
 echo    total: Instalar Total Commander
-echo    reteam: re/Instalacion de Teamviewer 13
+echo    reteam: re/Instalacion de Teamviewer
 echo    spooler: Vacía cola de impresión
 echo    printers: Abre impresoras en Windows 11
 echo    pesadilla: Parche PrintNightmare
@@ -339,16 +339,101 @@ REM //ANCHOR - ReTeam
 :reteam
 
 echo.
-echo * Instalación de Teamviewer 13
+echo * reInstalación de Teamviewer
 
 call :getadmin
 
 %temp:~0,2%
 cd "%temp%"
 
-%curl% --ignore-content-length https://agdseguridad.com.ar/tvupdate.exe
+del "TeamViewer_Setup*.exe" >nul 2>&1
 
-"%temp%\tvupdate.exe"
+echo.
+echo   - Descargando...
+echo.
+%curl% https://agdseguridad.com.ar/tvupdate.exe
+
+echo.
+echo   - Deteniendo...
+net stop Teamviewer >nul
+taskkill /F /FI "IMAGENAME eq Teamviewer*" >nul
+
+echo.
+echo   - Creando configuracion...
+
+REM ============================================
+REM   Configuracion de Teamviewer en Registro
+REM ============================================
+
+reg add "HKCU\SOFTWARE\TeamViewer" /v "SuitedForOnboarding" /t REG_DWORD /d 1 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "WhatsNewShownVersion" /t REG_SZ /d "17.1.111" /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "IntroShown" /t REG_DWORD /d 1 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "IntroscreenShownVersion" /t REG_SZ /d "17.1.111 " /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "ColorScheme" /t REG_DWORD /d 2 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "PilotTabWasEnabled" /t REG_DWORD /d 1 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "CM_ShowTermsOfService" /t REG_DWORD /d 0 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "LastSelectedTabInClassicUI" /t REG_DWORD /d 1 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "AdvertisingDisabledSettingActive" /t REG_DWORD /d 1 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "ConfigurationOneUIOptOutDisabled" /t REG_DWORD /d 1 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "MinimizeToTray" /t REG_DWORD /d 1 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "MainWindowSmallModeActivated" /t REG_DWORD /d 0 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "ShowTaskbarInfoOnMinimize" /t REG_DWORD /d 0 /f>nul
+reg add "HKCU\SOFTWARE\TeamViewer" /v "ChangeDynamicPassword" /t REG_DWORD /d 0 /f>nul
+
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer" /v "Always_Online" /t REG_DWORD /d 1 /f>nul
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer" /v "Security_ActivateDirectIn" /t REG_DWORD /d 0 /f>nul
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer" /v "EnterpriseUIState" /t REG_BINARY /d "D5 7F F6 6F F1 00 65 30 CA 42 B4 69 AA 5A 0F 1B 64 06 76 B7 2A 95 F9 8E 59 EE A2 73 D6 1B 34 A0" /f>nul
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer" /v "MultiUserSupport" /t REG_DWORD /d 0 /f>nul
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer" /v "TeamViewerTermsOfUseAccepted" /t REG_DWORD /d 1 /f>nul
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer" /v "1EAutoActivationState" /t REG_DWORD /d 3 /f>nul
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer" /v "RemoteManagementServicesAutoInstallationActive" /t REG_DWORD /d 1 /f>nul
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer" /v "AutoServiceInstallationCoreActive" /t REG_DWORD /d 1 /f>nul
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer" /v "Security_PasswordStrength" /t REG_DWORD /d 1 /f>nul
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer" /v "ACFullAccessOnLoginScreen" /t REG_DWORD /d 1 /f>nul
+
+reg add "HKLM\SOFTWARE\Wow6432Node\TeamViewer\DefaultSettings" /v "Autostart_GUI" /t REG_DWORD /d 1 /f>nul
+
+echo.
+echo   - Instalando...
+start /wait "Team" "%temp%\tvupdate.exe" /S
+
+timeout 5 >nul
+net stop teamviewer
+echo.
+echo   - Iniciando...
+
+if exist "c:\Program Files (x86)\TeamViewer\TeamViewer.exe" (
+    echo Team x86
+    start "Team" "c:\Program Files (x86)\TeamViewer\TeamViewer.exe"
+) else (
+    echo Team x64
+    start "Team" "c:\Program Files\TeamViewer\TeamViewer.exe"
+)
+
+timeout 5 >nul
+net start Teamviewer
+
+echo.
+echo Verificando ID de Teamviewer...
+
+:TeamID
+
+for /f "tokens=3 delims= " %%A IN ('reg query HKEY_LOCAL_MACHINE\SOFTWARE\TeamViewer /v ClientID ^| Find "0x"') DO set /A TeamID=%%A >nul
+for /f "tokens=3 delims= " %%A IN ('reg query HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\TeamViewer /v ClientID ^| Find "0x"') DO set /A TeamID=%%A >nul
+
+cls
+echo ======= Teamviewer ID ========
+echo.
+
+if defined TeamID (
+
+    echo           %TeamID%
+
+    ) else (
+    ping 127.0.0.1 -n 3 >nul 2>&1
+    goto TeamID
+
+    )
 
 goto next
 rem ------------------------------------------------------------------------------------------
