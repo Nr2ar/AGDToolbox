@@ -1049,6 +1049,7 @@ goto fusionator-Download
 echo  - Instalando...
 set fusion-comando=/acceptlicense /add-firewall-exception /execmode=service /installtasks=full /no-start-menu /runnow /S /scan-homedirs /server="%GLPI_Server%/plugins/fusioninventory/"
 start /b /wait "fusion" "%temp%\FusionInventory-Agent.exe" %fusion-comando% /tag="%fusion-TAG%"
+sc failure FusionInventory-Agent reset= 86400 actions= restart/60000/restart/60000/restart/60000
 
 :fusionator-Fusionar
 net start FusionInventory-Agent >nul 2>&1
