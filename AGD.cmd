@@ -413,6 +413,8 @@ if exist "c:\Program Files (x86)\TeamViewer\TeamViewer.exe" (
 timeout 5 >nul
 net start Teamviewer
 
+if "%King11-Install%" == "SI" exit /b
+
 echo.
 echo Verificando ID de Teamviewer...
 
@@ -1261,6 +1263,10 @@ echo.
 echo  * Instalando DotNet...
 winget install -e --id Microsoft.DotNet.DesktopRuntime.9
 winget install -e --id Microsoft.DotNet.DesktopRuntime.10
+
+echo.
+echo  * Actualizando Teamviewer...
+call :reteam
 
 echo.
 echo  * Retoques...
