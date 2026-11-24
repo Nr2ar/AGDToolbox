@@ -1111,6 +1111,9 @@ if "%Donde_Estoy%" == "MUNI" (
   set UserToquen=Vga1ouW5Kpb45tPpLWIEW1MlgSiPeW1kB2DwAYgG
   set AppToquen=rPTLQPXLvp2GJmbheLlbKUPVC5zlEz2fU3x67oHe
 )
+
+echo on
+
 rem Obtener token de sesión
 :fusionator-SessionToquen
 for /f "delims=" %%a in ('powershell -NoLogo -NoProfile -Command "(Invoke-RestMethod -Uri '%GLPI_Server%/apirest.php/initSession' -Headers @{ 'Content-Type'='application/json'; 'Authorization'='user_token %UserToquen%'; 'App-Token'='%AppToquen%' } -Method Get).session_token"') do set "SessionToquen=%%a"
