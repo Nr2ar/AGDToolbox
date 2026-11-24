@@ -1122,7 +1122,7 @@ if not defined SessionToquen (
 )
 
 :fusionator-TargetID
-for /f "tokens=2 delims=:" %%a in ('powershell -NoLogo -NoProfile -Command "$url='%GLPI_Server%/apirest.php/PluginFusioninventoryAgent?range=0-50000';  $headers=@{'Session-Token'='%SessionToquen%';'App-Token'='%APPTOQUEN%'};   $data=Invoke-RestMethod -Uri $url -Headers $headers;   $agent=$data | Where-Object { $_.name -eq '%TARGET%' -or $_.device_id -eq '%TARGET%' } | Select-Object -First 1 computers_id;   $agent | Format-List"') do set "TargetID=%%a"
+for /f "tokens=2 delims=:" %%a in ('powershell -NoLogo -NoProfile -Command "$url='%GLPI_Server%/apirest.php/Agent?range=0-50000'; $headers=@{'Session-Token'='%SessionToquen%';'App-Token'='%APPTOQUEN%'}; $data=Invoke-RestMethod -Uri $url -Headers $headers; $agent=$data | Where-Object { $_.deviceid -eq '%TARGET%' -and $_.itemtype -eq 'Computer' } | Select-Object -First 1; Write-Output ('ID:' + $agent.items_id)"') do set "TargetID=%%a"
 
 if not defined TargetID (
     echo   - Esperando a GLPI...
