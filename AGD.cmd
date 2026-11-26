@@ -1112,8 +1112,6 @@ if "%Donde_Estoy%" == "MUNI" (
   set AppToquen=rPTLQPXLvp2GJmbheLlbKUPVC5zlEz2fU3x67oHe
 )
 
-echo on
-
 rem Obtener token de sesión
 :fusionator-SessionToquen
 for /f "delims=" %%a in ('powershell -NoLogo -NoProfile -Command "(Invoke-RestMethod -Uri '%GLPI_Server%/apirest.php/initSession' -Headers @{ 'Content-Type'='application/json'; 'Authorization'='user_token %UserToquen%'; 'App-Token'='%AppToquen%' } -Method Get).session_token"') do set "SessionToquen=%%a"
@@ -1125,7 +1123,13 @@ if not defined SessionToquen (
 )
 
 :fusionator-TargetID
-for /f "tokens=2 delims=:" %%a in ('powershell -NoLogo -NoProfile -Command "$url='%GLPI_Server%/apirest.php/Agent?range=0-50000'; $headers=@{'Session-Token'='%SessionToquen%';'App-Token'='%APPTOQUEN%'}; $data=Invoke-RestMethod -Uri $url -Headers $headers; $agent=$data | Where-Object { $_.deviceid -eq '%TARGET%' -and $_.itemtype -eq 'Computer' } | Select-Object -First 1; Write-Output ('ID:' + $agent.items_id)"') do set "TargetID=%%a"
+if "%Donde_Estoy%" == "MUNI" (
+  rem MUNI
+  for /f "tokens=2 delims=:" %%a in ('powershell -NoLogo -NoProfile -Command "$url='%GLPI_Server%/apirest.php/PluginFusioninventoryAgent?range=0-50000';  $headers=@{'Session-Token'='%SessionToquen%';'App-Token'='%APPTOQUEN%'};   $data=Invoke-RestMethod -Uri $url -Headers $headers;   $agent=$data | Where-Object { $_.name -eq '%TARGET%' -or $_.device_id -eq '%TARGET%' } | Select-Object -First 1 computers_id;   $agent | Format-List"') do set "TargetID=%%a"
+  ) else (
+  rem AGD
+  for /f "tokens=2 delims=:" %%a in ('powershell -NoLogo -NoProfile -Command "$url='%GLPI_Server%/apirest.php/Agent?range=0-50000'; $headers=@{'Session-Token'='%SessionToquen%';'App-Token'='%APPTOQUEN%'}; $data=Invoke-RestMethod -Uri $url -Headers $headers; $agent=$data | Where-Object { $_.deviceid -eq '%TARGET%' -and $_.itemtype -eq 'Computer' } | Select-Object -First 1; Write-Output ('ID:' + $agent.items_id)"') do set "TargetID=%%a"
+)
 
 if not defined TargetID (
     echo   - Esperando a GLPI...
